@@ -1,0 +1,33 @@
+{
+    "name": "mugl-examples",
+    "version": "1.0.0",
+    "sideEffects": false,
+    "description": "mugl examples",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/andykswong/muge.git"
+    },
+    "author": "Andy K.S. Wong <andykswong@outlook.com>",
+    "license": "MIT",
+    "private": "true",
+    "scripts": {
+        "prebuild": "npm run build:rs -- --release",
+        "build": "webpack",
+        "build:rs": "cross-env CARGO_TARGET_DIR=./dist cargo build --target=wasm32-unknown-unknown --example wasm --features backend-webgl",
+        "start": "cross-env NODE_ENV=development webpack serve",
+        "test": "cargo test"
+    },
+    "devDependencies": {
+        "copy-webpack-plugin": "^10.2.0",
+        "copyfiles": "^2.4.0",
+        "cross-env": "^7.0.0",
+        "rimraf": "^3.0.0",
+        "source-map-loader": "^3.0.0",
+        "webpack": "^5.47.0",
+        "webpack-cli": "^4.7.0",
+        "webpack-dev-server": "^4.7.0"
+    },
+    "dependencies": {
+        "mugl": "^0.1.4"
+    }
+}

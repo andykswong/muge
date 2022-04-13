@@ -1,0 +1,55 @@
+[package]
+name = "mugl"
+version = "0.1.0"
+edition = "2021"
+authors = ["Andy K. S. Wong <andykswong@outlook.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/andykswong/muge"
+homepage = "https://github.com/andykswong/muge/crates/mugl"
+documentation = "https://docs.rs/mugl"
+description = "Minimalistic Low-Level Graphics Library for Rust and WebAssembly"
+categories = ["graphics", "no-std", "rendering", "wasm", "web-programming"]
+keywords = ["3d", "web", "webasm", "javascript", "webgl", "webgl2", "webgpu"]
+
+[features]
+default = []
+backend-wgpu = ["raw-window-handle", "std", "wgpu"]
+backend-webgl = []
+std = []
+
+[dependencies]
+async-trait = "0.1"
+cfg-if = "1.0"
+bitflags = "1.3"
+serde = { version = "1.0", optional = true, default-features = false, features = ["derive"] }
+serde_repr = "0.1"
+raw-window-handle = {  version = "0.4", optional = true, features = ["alloc"] }
+wgpu = { version = "0.12", optional = true }
+
+[dev-dependencies]
+munum = { path = "../munum", version = "0.1.0" }
+bytemuck = { version = "1.8", features = [ "derive" ] }
+env_logger = "0.9"
+image = { version = "0.24", default-features = false, features = ["png"] }
+lazy_static = "1.4"
+log = "0.4"
+wee_alloc = { version = "0.4" }
+winit = "0.26"
+
+[target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
+pollster = "0.2"
+
+[target.'cfg(target_family = "wasm")'.dev-dependencies]
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+panic = "abort"
+codegen-units = 1
+
+[[example]]
+name = "wasm"
+crate-type = ["cdylib"]
+required-features = ["backend-webgl"]
