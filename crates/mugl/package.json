@@ -1,8 +1,8 @@
 {
-    "name": "mugl-examples",
+    "name": "mugl-rs",
     "version": "1.0.0",
     "sideEffects": false,
-    "description": "mugl examples",
+    "description": "mugl rust examples",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/andykswong/muge.git"
@@ -14,8 +14,9 @@
         "prebuild": "npm run build:rs -- --release",
         "build": "webpack",
         "build:rs": "cross-env CARGO_TARGET_DIR=./dist cargo build --target=wasm32-unknown-unknown --example wasm --features backend-webgl",
+        "prestart": "npm run build:rs",
         "start": "cross-env NODE_ENV=development webpack serve",
-        "test": "cargo test"
+        "test": "cross-env CARGO_TARGET_DIR=./dist cargo test"
     },
     "devDependencies": {
         "copy-webpack-plugin": "^10.2.0",

@@ -17,9 +17,9 @@
 mugl = "0.1.0"
 ```
 Features:
-- `backend-webgl` - enables WebGL 2.0 backend for WASM based on ([`mugl.js`](https://github.com/andykswong/mugl)).
+- `backend-webgl` - enables WebGL 2.0 backend for WASM. Requires [`mugl/wasm`](https://github.com/andykswong/mugl) npm package for glue code. (see [usage](#hello-world))
 - `backend-wgpu` - enables WebGPU backend based on `wgpu`
-- `std` - enables `std` support. Enabled when `backend-wgpu` is used.
+- `std` - enables `std` support.
 - `serde` - enables `serde` serialize/deserialize implementations
 
 ## [Documentation](https://docs.rs/mugl)
@@ -27,8 +27,15 @@ See Docs.rs: https://docs.rs/mugl
 
 ## Usage
 
-### Hello World
+### [Examples](./examples)
+Several examples can be found in this repository:
+- [basic](./examples/app/basic.rs): ```cargo run --features backend-wgpu --example basic```
+- [instancing](./examples/app/instancing.rs): ```cargo run --features backend-wgpu --example instancing```
+- [stencil](./examples/app/stencil.rs): ```cargo run --features backend-wgpu --example stencil```
 
+Use npm to run the above examples on web: ```npm install && npm start```
+
+### Hello World
 Below is the minimal WASM app to draw a triangle using the WebGL backend (See full example code [here](./examples/app/basic.rs)):
 ```rust
 use mugl::{prelude::*, webgl::*};

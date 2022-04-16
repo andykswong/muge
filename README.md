@@ -1,1 +1,18 @@
-# muge - Minimal, Modular, Multiplatform Graphics Engine in Rust and WebAssembly
+<h1 align="center">🕊 MᴜGᴇ · むげ</h1>
+<h2 align="center">Minimal, Modular, Multiplatform Graphics Engine for Rust and WebAssembly</h2>
+<br />
+<p align="center">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a> 
+  <a href="https://github.com/andykswong/muge/actions"><img src="https://github.com/andykswong/muge/actions/workflows/build.yaml/badge.svg" alt="build" /></a>
+</p>
+
+> **⚠ WIP - More modules will be added soon**
+
+## Overview
+`muge` is a modular, cross-platform framework for 3D graphics and games in Rust and WebAssembly. For more details, see individual modules.
+
+## Modules
+|Module|Version|Docs|Description|
+|------|-------|----|-----------|
+|[`mugl`](./crates/mugl)|![Crates.io](https://img.shields.io/crates/v/mugl)|![docs.rs](https://img.shields.io/docsrs/mugl)|Low-level WebGL 2.0 / WebGPU 3D graphics abstraction layer|
+|[`munum`](./crates/munum)|![Crates.io](https://img.shields.io/crates/v/munum)|![docs.rs](https://img.shields.io/docsrs/munum)|Micro library for 3D math
