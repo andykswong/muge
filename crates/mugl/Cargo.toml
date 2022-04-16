@@ -10,7 +10,7 @@ homepage = "https://github.com/andykswong/muge/crates/mugl"
 documentation = "https://docs.rs/mugl"
 description = "Minimalistic Low-Level Graphics Library for Rust and WebAssembly"
 categories = ["graphics", "no-std", "rendering", "wasm", "web-programming"]
-keywords = ["3d", "web", "webasm", "javascript", "webgl", "webgl2", "webgpu"]
+keywords = ["3d", "webassembly", "javascript", "webgl", "webgpu"]
 
 [features]
 default = []
