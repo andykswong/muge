@@ -1,4 +1,5 @@
-//! GPU interface
+//! GPU interface.
+
 use alloc::boxed::Box;
 use async_trait::async_trait;
 use core::fmt::Debug;

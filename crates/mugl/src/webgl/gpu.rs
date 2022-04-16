@@ -23,12 +23,12 @@ use crate::descriptor::{
 use crate::gpu::{GPUDevice, GPUDeviceWebExt, GPURefTypes, GPURenderPassEncoder, GPUWebExt, GPU};
 use crate::primitive::{BufferSize, Color, ColorWrite, Extent2D, Extent3D, MipmapHint};
 
-/// WebGL GPU interface
+/// WebGL GPU interface.
 #[derive(Debug)]
 pub struct WebGL;
 
 impl WebGL {
-    /// Requests a new WebGL GPU device
+    /// Requests a new WebGL GPU device.
     pub fn request_device(
         canvas: &Canvas,
         desc: WebGLContextAttribute,
@@ -43,11 +43,13 @@ impl WebGL {
     }
 }
 
+/// WebGL GPU device.
 #[derive(Debug)]
 pub struct WebGLDevice {
     id: DeviceId,
 }
 
+/// WebGL GPU render pass encoder.
 #[derive(Debug)]
 pub struct WebGLRenderPassEncoder<'a> {
     device: &'a WebGLDevice,

@@ -1,3 +1,5 @@
+//! Empty backend
+
 use alloc::boxed::Box;
 use async_trait::async_trait;
 use core::ops::Range;

@@ -6,7 +6,7 @@ use super::mugl;
 use alloc::vec::Vec;
 use core::ops::Deref;
 
-/// GPU buffer.
+/// WebGL GPU buffer.
 #[derive(Debug)]
 pub struct WebGLBuffer {
     pub(crate) id: BufferId,
@@ -19,7 +19,7 @@ impl Drop for WebGLBuffer {
     }
 }
 
-/// GPU texture.
+/// WebGL GPU texture.
 #[derive(Debug)]
 pub struct WebGLTexture {
     pub(crate) id: TextureId,
@@ -32,7 +32,7 @@ impl Drop for WebGLTexture {
     }
 }
 
-/// GPU sampler.
+/// WebGL GPU sampler.
 #[derive(Debug)]
 pub struct WebGLSampler {
     pub(crate) id: SamplerId,
@@ -45,7 +45,7 @@ impl Drop for WebGLSampler {
     }
 }
 
-/// GPU shader.
+/// WebGL GPU shader.
 #[derive(Debug)]
 pub struct WebGLShader {
     pub(crate) id: ShaderId,
@@ -58,7 +58,7 @@ impl Drop for WebGLShader {
     }
 }
 
-/// GPU bind group.
+/// WebGL GPU bind group.
 #[derive(Debug)]
 pub struct WebGLBindGroup {
     pub(crate) id: BindGroupId,
@@ -71,7 +71,7 @@ impl Drop for WebGLBindGroup {
     }
 }
 
-/// GPU bind group layout.
+/// WebGL GPU bind group layout.
 #[derive(Debug)]
 pub struct WebGLBindGroupLayout {
     pub(crate) id: BindGroupLayoutId,
@@ -84,7 +84,7 @@ impl Drop for WebGLBindGroupLayout {
     }
 }
 
-/// GPU render pipeline.
+/// WebGL GPU render pipeline.
 #[derive(Debug)]
 pub struct WebGLRenderPipeline {
     pub(crate) id: RenderPipelineId,
@@ -97,7 +97,7 @@ impl Drop for WebGLRenderPipeline {
     }
 }
 
-/// GPU render pass.
+/// WebGL GPU render pass.
 #[derive(Debug)]
 pub struct WebGLRenderPass {
     pub(crate) id: RenderPassId,

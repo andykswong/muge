@@ -5,17 +5,20 @@ use core::ops::Deref;
 use crate::primitive::{Extent2D, PowerPreference, TextureDimension, TextureFormat};
 
 bitflags! {
+    /// WebGPU features.
     #[repr(transparent)]
     pub struct WGPUFeatures: u32 {
     }
 }
 
+/// WebGPU device descriptor.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct WGPUDeviceDescriptor {
     pub power_preference: PowerPreference,
     pub force_fallback_adapter: bool,
 }
 
+/// WebGPU surface descriptor.
 #[derive(Clone, Copy, Debug)]
 pub struct WGPUSurfaceDescriptor {
     pub depth_stencil_format: Option<TextureFormat>,
@@ -33,11 +36,13 @@ impl Default for WGPUSurfaceDescriptor {
     }
 }
 
+/// WebGPU buffer.
 #[derive(Debug)]
 pub struct WGPUBuffer {
     pub(super) buffer: wgpu::Buffer,
 }
 
+/// Readonly WebGPU buffer view.
 #[derive(Debug)]
 pub struct WGPUBufferView<'a> {
     pub(super) buffer: &'a wgpu::Buffer,
@@ -62,6 +67,7 @@ impl<'a> Drop for WGPUBufferView<'a> {
     }
 }
 
+/// WebGPU texture.
 #[derive(Debug)]
 pub struct WGPUTexture {
     pub(super) texture: wgpu::Texture,
@@ -71,22 +77,26 @@ pub struct WGPUTexture {
     pub(super) dimension: TextureDimension,
 }
 
+/// WebGPU sampler.
 #[derive(Debug)]
 pub struct WGPUSampler {
     pub(super) sampler: wgpu::Sampler,
 }
 
+/// WebGPU shader.
 #[derive(Debug)]
 pub struct WGPUShader {
     pub(super) shader: wgpu::ShaderModule,
 }
 
+/// WebGPU render pipeline.
 #[derive(Debug)]
 pub struct WGPURenderPipeline {
     pub(super) pipeline: wgpu::RenderPipeline,
     pub(super) index_format: wgpu::IndexFormat,
 }
 
+/// WebGPU render pass.
 #[derive(Debug)]
 pub struct WGPURenderPass {
     pub(super) color_views: Vec<wgpu::TextureView>,
@@ -97,11 +107,13 @@ pub struct WGPURenderPass {
     pub(super) stencil_ops: Option<wgpu::Operations<u32>>,
 }
 
+/// WebGPU bind group.
 #[derive(Debug)]
 pub struct WGPUBindGroup {
     pub(super) bind_group: wgpu::BindGroup,
 }
 
+/// WebGPU bind group layout.
 #[derive(Debug)]
 pub struct WGPUBindGroupLayout {
     pub(super) layout: wgpu::BindGroupLayout,

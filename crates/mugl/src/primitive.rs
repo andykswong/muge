@@ -96,7 +96,7 @@ impl From<Color<f32>> for Color {
 
 bitflags! {
     /// Buffer usage.
-    /// See: https://www.w3.org/TR/webgpu/#buffer-usage
+    /// See: <https://www.w3.org/TR/webgpu/#buffer-usage>
     #[cfg_attr(
         feature = "serde",
         derive(serde::Serialize, serde::Deserialize),
@@ -115,7 +115,7 @@ bitflags! {
     }
 
     /// Texture usage.
-    /// See: https://www.w3.org/TR/webgpu/#typedefdef-gputextureusageflags
+    /// See: <https://www.w3.org/TR/webgpu/#typedefdef-gputextureusageflags>
     #[cfg_attr(
         feature = "serde",
         derive(serde::Serialize, serde::Deserialize),
@@ -128,7 +128,7 @@ bitflags! {
     }
 
     /// Color write flags.
-    /// See: https://www.w3.org/TR/webgpu/#typedefdef-gpucolorwriteflags
+    /// See: <https://www.w3.org/TR/webgpu/#typedefdef-gpucolorwriteflags>
     #[cfg_attr(
         feature = "serde",
         derive(serde::Serialize, serde::Deserialize),
@@ -144,7 +144,7 @@ bitflags! {
     }
 
     /// Shader stage.
-    /// See: https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createShader
+    /// See: <https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createShader>
     #[cfg_attr(
         feature = "serde",
         derive(serde::Serialize, serde::Deserialize),
@@ -186,7 +186,7 @@ impl Default for ShaderStage {
 }
 
 /// Texture dimension.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gputextureviewdimension
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gputextureviewdimension>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -205,7 +205,7 @@ impl Default for TextureDimension {
 }
 
 /// Texture format.
-/// See: https://www.w3.org/TR/webgpu/#texture-formats
+/// See: <https://www.w3.org/TR/webgpu/#texture-formats>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -331,7 +331,7 @@ impl TextureFormat {
 }
 
 /// Texture address mode.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpuaddressmode
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuaddressmode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -349,7 +349,7 @@ impl Default for AddressMode {
 }
 
 /// Texture filter mode.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpufiltermode
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpufiltermode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -366,7 +366,7 @@ impl Default for FilterMode {
 }
 
 /// Compare function.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpucomparefunction
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpucomparefunction>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -389,7 +389,7 @@ impl Default for CompareFunction {
 }
 
 /// Primitive topology.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpuprimitivetopology
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuprimitivetopology>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -409,7 +409,7 @@ impl Default for PrimitiveTopology {
 }
 
 /// Vertex index format.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpuindexformat
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuindexformat>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -426,7 +426,7 @@ impl Default for IndexFormat {
 }
 
 /// Identify which side is the front face by setting a winding orientation.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpufrontface
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpufrontface>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -443,7 +443,7 @@ impl Default for FrontFace {
 }
 
 /// Specify the face to cull.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpucullmode
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpucullmode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -461,7 +461,7 @@ impl Default for CullMode {
 }
 
 /// Stencil-buffer operation.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpustenciloperation
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpustenciloperation>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -484,7 +484,7 @@ impl Default for StencilOperation {
 }
 
 /// Specify the alpha-blending factor.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpublendfactor
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpublendfactor>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -505,7 +505,7 @@ pub enum BlendFactor {
 }
 
 /// Specify the blend operation.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpublendoperation
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpublendoperation>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -525,7 +525,7 @@ impl Default for BlendOperation {
 }
 
 /// Vertex step mode.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpuvertexstepmode
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuvertexstepmode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -542,7 +542,7 @@ impl Default for VertexStepMode {
 }
 
 /// Vertex format.
-/// See: https://www.w3.org/TR/webgpu/#enumdef-gpuvertexformat
+/// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuvertexformat>
 /// Enum values encode the properties of the formats:
 /// - bits 0-3 encodes the number of components (1, 2, 3 or 4)
 /// - bits 4-7 encodes the number of bytes per component (1, 2 or 4)
@@ -637,7 +637,7 @@ impl Default for TextureSampleType {
 }
 
 /// Hint for mipmap generation.
-/// See: https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/hint
+/// See: <https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/hint>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u32)]

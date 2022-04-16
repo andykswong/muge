@@ -1,3 +1,5 @@
+//! Transformation matrix functions.
+
 use num::traits::NumAssign;
 
 #[cfg(any(feature = "std", feature = "libm"))]

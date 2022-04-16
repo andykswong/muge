@@ -1,3 +1,5 @@
+//! Scalar type helpers.
+
 use num::Num;
 
 /// Returns negative one of type T.

@@ -100,7 +100,9 @@ impl ResourceType {
     pub const RENDER_PASS: usize = 12;
 }
 
+/// App context Id.
 pub type ContextId = Id<{ ResourceType::CONTEXT }>;
+
 pub type FutureId = Id<{ ResourceType::FUTURE }>;
 pub type CanvasId = Id<{ ResourceType::CANVAS }>;
 pub type ImageSourceId = Id<{ ResourceType::IMAGE_SOURCE }>;

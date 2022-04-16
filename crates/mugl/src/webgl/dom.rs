@@ -10,7 +10,7 @@ use crate::primitive::Extent2D;
 
 static mut TASKS: Vec<Rc<RefCell<Option<Waker>>>> = Vec::new();
 
-/// JS/DOM task queue. Apps must call Tasks::poll()
+/// JS/DOM task queue. Apps must call `Tasks::poll()` to allow JS futures to make progress.
 pub struct Tasks;
 
 impl Tasks {
@@ -60,7 +60,7 @@ impl Future for JsFuture {
     }
 }
 
-/// A canvas handle
+/// A canvas handle.
 #[derive(Debug)]
 pub struct Canvas {
     pub(crate) id: CanvasId,
@@ -85,7 +85,7 @@ impl Canvas {
     }
 }
 
-/// An external image handle
+/// An external image handle.
 #[derive(Debug)]
 pub struct ImageSource {
     pub(crate) id: ImageSourceId,

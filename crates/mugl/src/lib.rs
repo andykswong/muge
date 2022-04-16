@@ -16,6 +16,7 @@ pub use descriptor::*;
 pub use primitive::*;
 pub use gpu::*;
 
+/// Core types.
 pub mod prelude {
     pub use crate::alias::*;
     pub use crate::descriptor::*;

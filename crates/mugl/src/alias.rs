@@ -1,3 +1,5 @@
+//! GPU object type definitions.
+
 use crate::gpu::{GPURefTypes, GPUWebExt, GPU};
 
 cfg_if::cfg_if! {
@@ -46,7 +48,7 @@ pub type BindGroupLayout<G = DefaultGPU> = <G as GPU>::BindGroupLayout;
 /// The GPU render pass encoder type.
 pub type RenderPassEncoder<'a, G = DefaultGPU> = <G as GPURefTypes<'a, G>>::RenderPassEncoder;
 
-// A mapped view into a GPU buffer.
+/// A mapped view into a GPU buffer.
 pub type BufferView<'a, G = DefaultGPU> = <G as GPURefTypes<'a, G>>::BufferView;
 
 /// An external image source.

@@ -23,10 +23,11 @@ use crate::descriptor::{
 use crate::gpu::{GPUDevice, GPURefTypes, GPURenderPassEncoder, GPU};
 use crate::primitive::{BufferSize, Color, Extent2D, Extent3D, TextureUsage};
 
-/// WebGPU interface
+/// WebGPU interface.
 #[derive(Debug)]
 pub struct WGPU;
 
+/// WebGPU device.
 #[derive(Debug)]
 pub struct WGPUDevice {
     #[allow(dead_code)]
@@ -46,6 +47,7 @@ pub struct WGPUDevice {
     encoder: RwLock<Option<wgpu::CommandEncoder>>,
 }
 
+/// WebGPU surface texture.
 #[derive(Debug, Default)]
 struct WGPUSurfaceTexture {
     texture: Option<wgpu::SurfaceTexture>,
@@ -56,6 +58,7 @@ struct WGPUSurfaceTexture {
     depth_texture_view: Option<wgpu::TextureView>,
 }
 
+/// WebGPU render pass encoder.
 #[derive(Debug)]
 pub struct WGPURenderPassEncoder<'a> {
     device: &'a WGPUDevice,

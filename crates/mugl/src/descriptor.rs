@@ -72,7 +72,7 @@ impl<'a, G: GPU> Clone for TextureView<'a, G> {
 impl<'a, G: GPU> Copy for TextureView<'a, G> {}
 
 /// This specifies the texture with origin offset for a texture write operation.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpuimagecopytexture
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpuimagecopytexture>
 #[derive(Debug)]
 pub struct ImageCopyTexture<'a, G: GPU> {
     pub texture: &'a G::Texture,
@@ -132,7 +132,7 @@ impl<'a, G: GPUWebExt> Clone for ImageCopyExternalImage<'a, G> {
 impl<'a, G: GPUWebExt> Copy for ImageCopyExternalImage<'a, G> {}
 
 /// This specifies the layout of a texture image buffer data for a texture write.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpuimagedatalayout
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpuimagedatalayout>
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)]
 pub struct ImageDataLayout {
@@ -195,7 +195,7 @@ pub struct RenderPipelineDescriptor<'a, G: GPU> {
 }
 
 /// This describes the primitive state of a render pipeline.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpuprimitivestate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpuprimitivestate>
 #[derive(Clone, Copy, Debug, Default)]
 pub struct PrimitiveState {
     pub topology: PrimitiveTopology,
@@ -205,7 +205,7 @@ pub struct PrimitiveState {
 }
 
 /// This describes the multisample state of a render pipeline.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpumultisamplestate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpumultisamplestate>
 #[derive(Clone, Copy, Debug)]
 pub struct MultisampleState {
     pub count: u32,
@@ -222,7 +222,7 @@ impl Default for MultisampleState {
 }
 
 /// This describes the depth-stencil state of a render pipeline.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpudepthstencilstate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpudepthstencilstate>
 #[derive(Clone, Copy, Debug)]
 pub struct DepthStencilState {
     pub format: TextureFormat,
@@ -255,7 +255,7 @@ impl Default for DepthStencilState {
 }
 
 /// This describes a stencil face state of a DepthStencilState.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpudepthstencilstate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpudepthstencilstate>
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)]
 pub struct StencilFaceState {
@@ -266,7 +266,7 @@ pub struct StencilFaceState {
 }
 
 /// This describes the color target states of a render pipeline.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpucolortargetstate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpucolortargetstate>
 #[derive(Clone, Copy, Debug)]
 pub enum ColorTargetStates<'a> {
     /// Default render pass color target states.
@@ -289,7 +289,7 @@ impl<'a> Default for ColorTargetStates<'a> {
 }
 
 /// This describes a color target state of a render pipeline.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpucolortargetstate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpucolortargetstate>
 #[derive(Clone, Copy, Debug, Default)]
 pub struct ColorTargetState {
     pub format: TextureFormat,
@@ -298,7 +298,7 @@ pub struct ColorTargetState {
 }
 
 /// This describes the blend state of a color target.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpublendstate
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpublendstate>
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)]
 pub struct BlendState {
@@ -307,7 +307,7 @@ pub struct BlendState {
 }
 
 /// This describes the blend component state.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpublendcomponent
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpublendcomponent>
 #[derive(Clone, Copy, Debug)]
 #[repr(C)]
 pub struct BlendComponent {
@@ -328,7 +328,7 @@ impl Default for BlendComponent {
 }
 
 /// This describes the layout of a vertex buffer.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpuvertexbufferlayout
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpuvertexbufferlayout>
 #[derive(Clone, Copy, Debug, Default)]
 pub struct VertexBufferLayout<'a> {
     pub stride: BufferSize,
@@ -337,7 +337,7 @@ pub struct VertexBufferLayout<'a> {
 }
 
 /// This describes the layout of a vertex buffer.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpuvertexbufferlayout
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpuvertexbufferlayout>
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)]
 pub struct VertexAttribute {
@@ -347,7 +347,7 @@ pub struct VertexAttribute {
 }
 
 /// This describes a render pass.
-/// See: https://www.w3.org/TR/webgpu/#render-pass-encoder-creation
+/// See: <https://www.w3.org/TR/webgpu/#render-pass-encoder-creation>
 #[derive(Clone, Copy, Debug)]
 pub enum RenderPassDescriptor<'a, 'b, G: GPU> {
     /// Default render pass
@@ -378,7 +378,7 @@ impl<'a, 'b, G: GPU> Default for RenderPassDescriptor<'a, 'b, G> {
 }
 
 /// This describes a color attachment for a render pass.
-/// See: https://www.w3.org/TR/webgpu/#dictdef-gpurenderpasscolorattachment
+/// See: <https://www.w3.org/TR/webgpu/#dictdef-gpurenderpasscolorattachment>
 #[derive(Clone, Copy, Debug)]
 pub struct ColorAttachment<'a, G: GPU> {
     pub view: TextureView<'a, G>,

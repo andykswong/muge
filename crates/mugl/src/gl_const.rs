@@ -1,5 +1,5 @@
 //! All WebGL core and extension constants.
-//! See: https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants
+//! See: <https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants>
 
 #![allow(non_upper_case_globals)]
 

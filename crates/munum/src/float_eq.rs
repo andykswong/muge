@@ -1,3 +1,5 @@
+//! Float type comparison helpers.
+
 use num::traits::{float::FloatCore, NumAssign, NumCast};
 use crate::{Matrix, Quaternion};
 
