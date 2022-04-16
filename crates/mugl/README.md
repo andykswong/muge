@@ -5,7 +5,6 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a> 
   <a href="https://crates.io/crates/mugl"><img src="https://img.shields.io/crates/v/mugl.svg" alt="Crates.io" /></a> 
   <a href="https://docs.rs/mugl"><img src="https://docs.rs/mugl/badge.svg" alt="Docs.rs" /></a> 
-  <a href="https://github.com/andykswong/muge/actions"><img src="https://github.com/andykswong/muge/actions/workflows/build.yaml/badge.svg" alt="build" /></a>
 </p>
 
 ## Overview
