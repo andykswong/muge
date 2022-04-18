@@ -47,7 +47,7 @@ fn serde_interpolation_test_glb() -> Result<(), Error> {
     assert_deser_glb_matches(
         include_bytes!("./model/InterpolationTest/glTF-Binary/InterpolationTest.glb"),
         include_str!("./model/InterpolationTest/glTF-Binary/InterpolationTestGlb.gltf"),
-        include_bytes!("./model/InterpolationTest/glTF/Interpolation.bin"),
+        include_bytes!("./model/InterpolationTest/glTF/interpolation.bin"),
     )
 }
 
