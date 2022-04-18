@@ -1,5 +1,9 @@
 [workspace]
-members = ["crates/*"]
+members = [
+    "crates/mugl",
+    "crates/mugltf",
+    "crates/munum"
+]
 resolver = "2"
 
 [profile.release]

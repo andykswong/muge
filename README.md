@@ -15,4 +15,5 @@
 |Module|Version|Docs|Description|
 |------|-------|----|-----------|
 |[`mugl`](./crates/mugl)|[![Crates.io](https://img.shields.io/crates/v/mugl)](https://crates.io/crates/mugl)|[![docs.rs](https://img.shields.io/docsrs/mugl)](https://docs.rs/mugl)|Low-level WebGL 2.0 / WebGPU 3D graphics abstraction layer|
+|[`mugltf`](./crates/mugltf)|[![Crates.io](https://img.shields.io/crates/v/mugltf)](https://crates.io/crates/mugltf)|[![docs.rs](https://img.shields.io/docsrs/mugltf)](https://docs.rs/mugltf)|Minimal glTF 2.0 asset loader|
 |[`munum`](./crates/munum)|[![Crates.io](https://img.shields.io/crates/v/munum)](https://crates.io/crates/munum)|[![docs.rs](https://img.shields.io/docsrs/munum)](https://docs.rs/munum)|Micro library for 3D math
