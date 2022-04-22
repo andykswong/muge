@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/muds",
     "crates/mugl",
     "crates/mugltf",
     "crates/munum"

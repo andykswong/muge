@@ -85,103 +85,109 @@ impl<T: Copy + NumAssign> Quaternion<T> {
     }
 }
 
-cfg_if::cfg_if! {
-if #[cfg(any(feature = "std", feature = "libm"))] {
-    impl<T: Copy + Float + NumAssign> Quaternion<T> {
-        /// Creates a quaternion from a unit axis vector and rotation angle in couterclockwise direction.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::{Vec3, Quaternion, assert_float_eq};
-        /// let q = <Quaternion>::from_axis_angle(<Vec3>::from_slice(&[3., 5., 7.]), PI/3.);
-        /// let expected = <Quaternion>::from_slice(&[3. * (PI/6.).sin(), 5. * (PI/6.).sin(), 7. * (PI/6.).sin(), (PI/6.).cos()]);
-        /// assert_float_eq!(q, expected, 0.00001);
-        /// ```
-        pub fn from_axis_angle(axis: Vec3<T>, angle: T) -> Self {
-            let half_angle = angle / (T::one() + T::one());
-            let sin_half_angle = half_angle.sin();
-            Self::from_slice(&[axis[0] * sin_half_angle, axis[1] * sin_half_angle, axis[2] * sin_half_angle, half_angle.cos()])
-        }
-
-        /// Creates a quaternion from a rotation angle around x-axis in couterclockwise direction.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::{Quaternion, assert_float_eq};
-        /// let q = <Quaternion>::from_angle_x(PI/3.);
-        /// let expected = <Quaternion>::from_slice(&[(PI/6.).sin(), 0., 0., (PI/6.).cos()]);
-        /// assert_float_eq!(q, expected, 0.00001);
-        /// ```
-        pub fn from_angle_x(angle: T) -> Self {
-            let half_angle = angle / (T::one() + T::one());
-            Self::from_slice(&[half_angle.sin(), T::zero(), T::zero(), half_angle.cos()])
-        }
-
-        /// Creates a quaternion from a rotation angle around x-axis in couterclockwise direction.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::{Quaternion, assert_float_eq};
-        /// let q = <Quaternion>::from_angle_y(PI/3.);
-        /// let expected = <Quaternion>::from_slice(&[0., (PI/6.).sin(), 0., (PI/6.).cos()]);
-        /// assert_float_eq!(q, expected, 0.00001);
-        /// ```
-        pub fn from_angle_y(angle: T) -> Self {
-            let half_angle = angle / (T::one() + T::one());
-            Self::from_slice(&[T::zero(), half_angle.sin(), T::zero(), half_angle.cos()])
-        }
-
-        /// Creates a quaternion from a rotation angle around x-axis in couterclockwise direction.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::{Quaternion, assert_float_eq};
-        /// let q = <Quaternion>::from_angle_z(PI/3.);
-        /// let expected = <Quaternion>::from_slice(&[0., 0., (PI/6.).sin(), (PI/6.).cos()]);
-        /// assert_float_eq!(q, expected, 0.00001);
-        /// ```
-        pub fn from_angle_z(angle: T) -> Self {
-            let half_angle = angle / (T::one() + T::one());
-            Self::from_slice(&[T::zero(), T::zero(), half_angle.sin(), half_angle.cos()])
-        }
+#[cfg(any(feature = "std", feature = "libm"))]
+impl<T: Copy + Float + NumAssign> Quaternion<T> {
+    /// Creates a quaternion from a unit axis vector and rotation angle in couterclockwise direction.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::{Vec3, Quaternion, assert_float_eq};
+    /// let q = <Quaternion>::from_axis_angle(<Vec3>::from_slice(&[3., 5., 7.]), PI/3.);
+    /// let expected = <Quaternion>::from_slice(&[3. * (PI/6.).sin(), 5. * (PI/6.).sin(), 7. * (PI/6.).sin(), (PI/6.).cos()]);
+    /// assert_float_eq!(q, expected, 0.00001);
+    /// ```
+    pub fn from_axis_angle(axis: Vec3<T>, angle: T) -> Self {
+        let half_angle = angle / (T::one() + T::one());
+        let sin_half_angle = half_angle.sin();
+        Self::from_slice(&[
+            axis[0] * sin_half_angle,
+            axis[1] * sin_half_angle,
+            axis[2] * sin_half_angle,
+            half_angle.cos(),
+        ])
     }
 
-    impl<T: Copy + Float + FloatEq<T> + NumAssign + NumCast> Quaternion<T> {
-        /// Creates a quaternion that represents the shortest arc rotation between 2 unit vectors.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::{Quaternion, Vec3, assert_float_eq};
-        /// let q = <Quaternion>::from_unit_vecs(<Vec3>::from_slice(&[0., 0., 1.]), <Vec3>::from_slice(&[1., 0., 0.]));
-        /// let expected = <Quaternion>::from_slice(&[0., (PI/4.).sin(), 0., (PI/4.).cos()]);
-        /// assert_float_eq!(q, expected, 0.00001);
-        /// ```
-        pub fn from_unit_vecs(from: Vec3<T>, to: Vec3<T>) -> Self {
-            let epsilon = float_eq::epsilon();
-            let dot = from.dot(to);
+    /// Creates a quaternion from a rotation angle around x-axis in couterclockwise direction.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::{Quaternion, assert_float_eq};
+    /// let q = <Quaternion>::from_angle_x(PI/3.);
+    /// let expected = <Quaternion>::from_slice(&[(PI/6.).sin(), 0., 0., (PI/6.).cos()]);
+    /// assert_float_eq!(q, expected, 0.00001);
+    /// ```
+    pub fn from_angle_x(angle: T) -> Self {
+        let half_angle = angle / (T::one() + T::one());
+        Self::from_slice(&[half_angle.sin(), T::zero(), T::zero(), half_angle.cos()])
+    }
 
-            if dot.float_eq(T::one(), epsilon) { // vectors are in same direction
-                Self::identity()
-            } else if dot.float_eq(-T::one(), epsilon) { // vectors are in parallel but opposite direction
-                // use arbitrary perpendicular vector = (0, z, -y)
-                let mut axis = Vec3::<T>::from_slice(&[T::zero(), from[2], -from[1]]);
-                axis.normalize();
-                Self::from_axis_angle(axis,  NumCast::from(PI).expect("incompatible type"))
-            } else { // store perpendicular vector to the xyz of out.
-                let cross = from.cross(to);
-                let w = T::one() + dot;
-                let mut result = Self::from_slice(&[cross[0], cross[1], cross[2], w]);
-                result.0.normalize();
-                result
-            }
-        }
+    /// Creates a quaternion from a rotation angle around x-axis in couterclockwise direction.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::{Quaternion, assert_float_eq};
+    /// let q = <Quaternion>::from_angle_y(PI/3.);
+    /// let expected = <Quaternion>::from_slice(&[0., (PI/6.).sin(), 0., (PI/6.).cos()]);
+    /// assert_float_eq!(q, expected, 0.00001);
+    /// ```
+    pub fn from_angle_y(angle: T) -> Self {
+        let half_angle = angle / (T::one() + T::one());
+        Self::from_slice(&[T::zero(), half_angle.sin(), T::zero(), half_angle.cos()])
+    }
+
+    /// Creates a quaternion from a rotation angle around x-axis in couterclockwise direction.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::{Quaternion, assert_float_eq};
+    /// let q = <Quaternion>::from_angle_z(PI/3.);
+    /// let expected = <Quaternion>::from_slice(&[0., 0., (PI/6.).sin(), (PI/6.).cos()]);
+    /// assert_float_eq!(q, expected, 0.00001);
+    /// ```
+    pub fn from_angle_z(angle: T) -> Self {
+        let half_angle = angle / (T::one() + T::one());
+        Self::from_slice(&[T::zero(), T::zero(), half_angle.sin(), half_angle.cos()])
     }
 }
+
+#[cfg(any(feature = "std", feature = "libm"))]
+impl<T: Copy + Float + FloatEq<T> + NumAssign + NumCast> Quaternion<T> {
+    /// Creates a quaternion that represents the shortest arc rotation between 2 unit vectors.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::{Quaternion, Vec3, assert_float_eq};
+    /// let q = <Quaternion>::from_unit_vecs(<Vec3>::from_slice(&[0., 0., 1.]), <Vec3>::from_slice(&[1., 0., 0.]));
+    /// let expected = <Quaternion>::from_slice(&[0., (PI/4.).sin(), 0., (PI/4.).cos()]);
+    /// assert_float_eq!(q, expected, 0.00001);
+    /// ```
+    pub fn from_unit_vecs(from: Vec3<T>, to: Vec3<T>) -> Self {
+        let epsilon = float_eq::epsilon();
+        let dot = from.dot(to);
+
+        if dot.float_eq(T::one(), epsilon) {
+            // vectors are in same direction
+            Self::identity()
+        } else if dot.float_eq(-T::one(), epsilon) {
+            // vectors are in parallel but opposite direction
+            // use arbitrary perpendicular vector = (0, z, -y)
+            let mut axis = Vec3::<T>::from_slice(&[T::zero(), from[2], -from[1]]);
+            axis.normalize();
+            Self::from_axis_angle(axis, NumCast::from(PI).expect("incompatible type"))
+        } else {
+            // store perpendicular vector to the xyz of out.
+            let cross = from.cross(to);
+            let w = T::one() + dot;
+            let mut result = Self::from_slice(&[cross[0], cross[1], cross[2], w]);
+            result.0.normalize();
+            result
+        }
+    }
 }
 
 impl<T: Copy + NumAssign> Default for Quaternion<T> {
@@ -402,97 +408,98 @@ impl<T: Copy + NumAssign> Quaternion<T> {
     }
 }
 
-cfg_if::cfg_if! {
-if #[cfg(any(feature = "std", feature = "libm"))] {
-    impl<T: Copy + Float + NumAssign> Quaternion<T> {
-        /// Calculates the length of this `Quaternion`.
-        ///
-        /// # Examples
-        /// ```
-        /// # use munum::Quaternion;
-        /// assert_eq!(<Quaternion>::from_slice(&[2., 5., 14., 8.]).len(), 17.);
-        /// ```
-        #[inline]
-        pub fn len(&self) -> T {
-            self.0.len()
-        }
-
-        /// Normizalizes this `Quaternion`.
-        ///
-        /// # Examples
-        /// ```
-        /// # use munum::{Quaternion, assert_float_eq};
-        /// let mut q = <Quaternion>::from_slice(&[2., 5., 14., 8.]);
-        /// q.normalize();
-        /// assert_float_eq!(q.as_ref(), &[2./17., 5./17., 14./17., 8./17.]);
-        /// ```
-        #[inline]
-        pub fn normalize(&mut self) {
-            self.0.normalize()
-        }
-
-        /// Linear interpolates between 2 unit `Quaternion`s.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::Quaternion;
-        /// let (q1, q2) = (<Quaternion>::from_slice(&[(PI/4.).sin(), 0., 0., (PI/4.).cos()]), <Quaternion>::from_slice(&[(PI/4.).sin(), 0., 0., -(PI/4.).cos()]));
-        /// assert_eq!(*q1.lerp(q2, 0.5).as_ref(), [1., 0., 0., 0.]);
-        /// ```
-        pub fn lerp(&self, rhs: Self, t: T) -> Self {
-            let cos = self.dot(rhs);  // calculate cosine from dot product
-            let mag_rhs = if cos.is_sign_negative() { -T::one() } else { T::one() };
-            let mut result = Self::default();
-            for i in 0..4 {
-                result.0[i] = scalar::lerp(self.0[i], rhs.0[i] * mag_rhs, t);
-            }
-            result.normalize();
-            result
-        }
-
-        /// Shperical linear interpolates between 2 unit `Quaternion`s.
-        ///
-        /// # Examples
-        /// ```
-        /// # use core::f32::consts::PI;
-        /// # use munum::{Quaternion, assert_float_eq};
-        /// let (q1, q2) = (<Quaternion>::from_slice(&[(PI/6.).sin(), 0., 0., (PI/6.).cos()]), <Quaternion>::from_slice(&[-(PI/6.).cos(), 0., 0., -(PI/6.).sin()]));
-        /// assert_float_eq!(q1.slerp(q2, 0.5).as_ref(), &[(PI/4.).sin(), 0., 0., (PI/4.).cos()]);
-        /// ```
-        pub fn slerp(&self, rhs: Self, t: T) -> Self {
-            let epsilon = float_eq::epsilon();
-            let one = T::one();
-            let mut cos = self.dot(rhs);  // calculate cosine from dot product
-            // use the shortest path
-            let mag_rhs = if cos.is_sign_negative() {
-                cos = cos.neg();
-                -one
-            } else {
-                one
-            };
-
-            // initialize with linear interpolation
-            let mut scale0 = one - t;
-            let mut scale1 = t;
-
-            // use spherical interpolation only if the quaternions are not very close
-            if one - cos > epsilon {
-                let theta = cos.acos();
-                let sin_theta = theta.sin();
-                scale0 = ((one - t) * theta).sin() / sin_theta;
-                scale1 = (t * theta).sin() / sin_theta;
-            }
-            scale1 *= mag_rhs;
-
-            let mut result = Self::default();
-            for i in 0..4 {
-                result.0[i] = self.0[i] * scale0 + rhs.0[i] * scale1;
-            }
-            result
-        }
+#[cfg(any(feature = "std", feature = "libm"))]
+impl<T: Copy + Float + NumAssign> Quaternion<T> {
+    /// Calculates the length of this `Quaternion`.
+    ///
+    /// # Examples
+    /// ```
+    /// # use munum::Quaternion;
+    /// assert_eq!(<Quaternion>::from_slice(&[2., 5., 14., 8.]).len(), 17.);
+    /// ```
+    #[inline]
+    pub fn len(&self) -> T {
+        self.0.len()
     }
-}
+
+    /// Normizalizes this `Quaternion`.
+    ///
+    /// # Examples
+    /// ```
+    /// # use munum::{Quaternion, assert_float_eq};
+    /// let mut q = <Quaternion>::from_slice(&[2., 5., 14., 8.]);
+    /// q.normalize();
+    /// assert_float_eq!(q.as_ref(), &[2./17., 5./17., 14./17., 8./17.]);
+    /// ```
+    #[inline]
+    pub fn normalize(&mut self) {
+        self.0.normalize()
+    }
+
+    /// Linear interpolates between 2 unit `Quaternion`s.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::Quaternion;
+    /// let (q1, q2) = (<Quaternion>::from_slice(&[(PI/4.).sin(), 0., 0., (PI/4.).cos()]), <Quaternion>::from_slice(&[(PI/4.).sin(), 0., 0., -(PI/4.).cos()]));
+    /// assert_eq!(*q1.lerp(q2, 0.5).as_ref(), [1., 0., 0., 0.]);
+    /// ```
+    pub fn lerp(&self, rhs: Self, t: T) -> Self {
+        let cos = self.dot(rhs); // calculate cosine from dot product
+        let mag_rhs = if cos.is_sign_negative() {
+            -T::one()
+        } else {
+            T::one()
+        };
+        let mut result = Self::default();
+        for i in 0..4 {
+            result.0[i] = scalar::lerp(self.0[i], rhs.0[i] * mag_rhs, t);
+        }
+        result.normalize();
+        result
+    }
+
+    /// Shperical linear interpolates between 2 unit `Quaternion`s.
+    ///
+    /// # Examples
+    /// ```
+    /// # use core::f32::consts::PI;
+    /// # use munum::{Quaternion, assert_float_eq};
+    /// let (q1, q2) = (<Quaternion>::from_slice(&[(PI/6.).sin(), 0., 0., (PI/6.).cos()]), <Quaternion>::from_slice(&[-(PI/6.).cos(), 0., 0., -(PI/6.).sin()]));
+    /// assert_float_eq!(q1.slerp(q2, 0.5).as_ref(), &[(PI/4.).sin(), 0., 0., (PI/4.).cos()]);
+    /// ```
+    pub fn slerp(&self, rhs: Self, t: T) -> Self {
+        let epsilon = float_eq::epsilon();
+        let one = T::one();
+        let mut cos = self.dot(rhs); // calculate cosine from dot product
+                                     // use the shortest path
+        let mag_rhs = if cos.is_sign_negative() {
+            cos = cos.neg();
+            -one
+        } else {
+            one
+        };
+
+        // initialize with linear interpolation
+        let mut scale0 = one - t;
+        let mut scale1 = t;
+
+        // use spherical interpolation only if the quaternions are not very close
+        if one - cos > epsilon {
+            let theta = cos.acos();
+            let sin_theta = theta.sin();
+            scale0 = ((one - t) * theta).sin() / sin_theta;
+            scale1 = (t * theta).sin() / sin_theta;
+        }
+        scale1 *= mag_rhs;
+
+        let mut result = Self::default();
+        for i in 0..4 {
+            result.0[i] = self.0[i] * scale0 + rhs.0[i] * scale1;
+        }
+        result
+    }
 }
 
 // endregion: Special Ops

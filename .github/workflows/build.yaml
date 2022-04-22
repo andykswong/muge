@@ -25,5 +25,5 @@ jobs:
       run: cargo test --verbose --no-default-features --features libm,gltf-name
     - name: Run serde tests
       run: cargo test --verbose --features serde
-    - name: Run no_std tests
+    - name: Run no_std serde tests
       run: cargo test --verbose --no-default-features --features libm,gltf-name,serde

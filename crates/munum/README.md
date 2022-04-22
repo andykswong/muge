@@ -13,7 +13,7 @@
 ## Install
 ```toml
 [dependencies]
-munum = "0.1.0"
+munum = "0.1"
 ```
 Features:
 - `std` - enables `std` support. enabled by default.

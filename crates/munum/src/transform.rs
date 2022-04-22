@@ -102,102 +102,110 @@ pub fn translation_of<T: Copy + NumAssign>(m: Mat4<T>) -> Vec3<T> {
     Vec3::new([[m[(0, 3)], m[(1, 3)], m[(2, 3)]]])
 }
 
-cfg_if::cfg_if! {
-if #[cfg(any(feature = "std", feature = "libm"))] {
-    /// Extracts the (x, y, z) scaling component from a 4x4 TRS transformation matrix.
-    ///
-    /// # Examples
-    /// ```
-    /// # use munum::{transform, vec3, Mat4};
-    /// assert_eq!(*transform::scaling_of(<Mat4>::from_slice(&[2., 2., -1., 0., -2., 4., 4., 0., 6., -3., 6., 0., 11., 12., 13., 1.])).as_ref(), [3., 6., 9.]);
-    /// ```
-    #[inline]
-    pub fn scaling_of<T: Copy + Float + NumAssign>(m: Mat4<T>) -> Vec3<T> {
-        Vec3::new([[
-            Vec3::new([[m[(0, 0)], m[(1, 0)], m[(2, 0)]]]).len(),
-            Vec3::new([[m[(0, 1)], m[(1, 1)], m[(2, 1)]]]).len(),
-            Vec3::new([[m[(0, 2)], m[(1, 2)], m[(2, 2)]]]).len(),
-        ]])
-    }
-
-    /// Extracts the rotation quaternion component from a 4x4 TRS transformation matrix.
-    ///
-    /// # Examples
-    /// ```
-    /// # use munum::{transform, vec3, Mat4, assert_float_eq};
-    /// assert_float_eq!(
-    ///     transform::rotation_of(<Mat4>::from_slice(&[2., 2., -1., 0., -2., 4., 4., 0., 6., -3., 6., 0., 11., 12., 13., 1.])).as_ref(),
-    ///     &[0.5/3_f32.sqrt(), 0.5/3_f32.sqrt(), 0.5/3_f32.sqrt(), 3_f32.sqrt()/2.]
-    /// );
-    /// ```
-    pub fn rotation_of<T: Copy + Float + NumAssign>(m: Mat4<T>) -> Quaternion<T> {
-        let zero = T::zero();
-        let one = T::one();
-        let two = one + one;
-        let scaling = scaling_of(m);
-        let m00 = m[(0, 0)] / scaling[0];
-        let m11 = m[(1, 1)] / scaling[1];
-        let m22 = m[(2, 2)] / scaling[2];
-
-        Quaternion::from_slice(&[
-            scalar::copysign(zero.max(one + m00 - m11 - m22).sqrt() / two, m[(2, 1)] / scaling[1] - m[(1, 2)] / scaling[2]),
-            scalar::copysign(zero.max(one - m00 + m11 - m22).sqrt() / two, m[(0, 2)] / scaling[2] - m[(2, 0)] / scaling[0]),
-            scalar::copysign(zero.max(one - m00 - m11 + m22).sqrt() / two, m[(1, 0)] / scaling[0] - m[(0, 1)] / scaling[1]),
-            zero.max(one + m00 + m11 + m22).sqrt() / two,
-        ])
-    }
-
-    /// Inverts a `Mat4` that represents a valid transformation in TRS order (= translation * rotation * scale).
-    /// This function is more efficient than `Mat4::invert` by leveraging the properties of a TRS matrix.
-    ///
-    /// # Examples
-    /// ```
-    /// # use munum::{transform, Mat4, assert_float_eq};
-    /// let mut m = <Mat4>::from_slice(&[2., 2., -1., 0., -2., 4., 4., 0., 6., -3., 6., 0., 1., 2., 3., 1.]);
-    /// transform::invert_trs(&mut m);
-    /// assert_float_eq!(m.as_ref(), &[2./9., -1./18., 2./27., 0., 2./9., 1./9., -1./27., 0., -1./9., 1./9., 2./27., 0., -1./3., -1./2., -2./9., 1.]);
-    /// ```
-    pub fn invert_trs<T: Copy + Float + NumAssign>(m: &mut Mat4<T>) {
-        // Assume M is a TRS matrix:
-        // M = T * R * S = [RS  t]
-        //                 [0   1]
-        // Then the inverse of M is:
-        // M^-1 = [(RS)^-1  (RS)^-1 * -t]
-        //        [   0           1     ]
-        // Where: (RS)^-1 = S^-1 * R^-1 = S^-1 * RT = S^-1 * ((RS)(S^-1))T = S^-1 * (S^-1)T * (RS)T = S^-1 * S^-1 * (RS)T
-
-        let zero = T::zero();
-        let one = T::one();
-        let neg = scalar::neg();
-
-        // Extract S and t
-        let scaling = scaling_of(*m);
-        let translation = translation_of(*m);
-
-        // Calculate m = (RS)T
-        m.transpose();
-        m[(3, 0)] = zero;
-        m[(3, 1)] = zero;
-        m[(3, 2)] = zero;
-
-        // Premultiply S^-2 = 1/(S*S) to m
-        for c in 0..3 {
-            for r in 0..3 {
-                m[(r, c)] *= one / (scaling[r] * scaling[r]);
-            }
-        }
-
-        // Now m = (RS)^-1
-        // Apply translation = (m * -t) to m
-        let mut t = Vec4::from_vec3(translation, zero);
-        t *= neg;
-        t.mul_assign(*m, t);
-
-        m[(0, 3)] = t[0];
-        m[(1, 3)] = t[1];
-        m[(2, 3)] = t[2];
-    }
+/// Extracts the (x, y, z) scaling component from a 4x4 TRS transformation matrix.
+///
+/// # Examples
+/// ```
+/// # use munum::{transform, vec3, Mat4};
+/// assert_eq!(*transform::scaling_of(<Mat4>::from_slice(&[2., 2., -1., 0., -2., 4., 4., 0., 6., -3., 6., 0., 11., 12., 13., 1.])).as_ref(), [3., 6., 9.]);
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+#[inline]
+pub fn scaling_of<T: Copy + Float + NumAssign>(m: Mat4<T>) -> Vec3<T> {
+    Vec3::new([[
+        Vec3::new([[m[(0, 0)], m[(1, 0)], m[(2, 0)]]]).len(),
+        Vec3::new([[m[(0, 1)], m[(1, 1)], m[(2, 1)]]]).len(),
+        Vec3::new([[m[(0, 2)], m[(1, 2)], m[(2, 2)]]]).len(),
+    ]])
 }
+
+/// Extracts the rotation quaternion component from a 4x4 TRS transformation matrix.
+///
+/// # Examples
+/// ```
+/// # use munum::{transform, vec3, Mat4, assert_float_eq};
+/// assert_float_eq!(
+///     transform::rotation_of(<Mat4>::from_slice(&[2., 2., -1., 0., -2., 4., 4., 0., 6., -3., 6., 0., 11., 12., 13., 1.])).as_ref(),
+///     &[0.5/3_f32.sqrt(), 0.5/3_f32.sqrt(), 0.5/3_f32.sqrt(), 3_f32.sqrt()/2.]
+/// );
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+pub fn rotation_of<T: Copy + Float + NumAssign>(m: Mat4<T>) -> Quaternion<T> {
+    let zero = T::zero();
+    let one = T::one();
+    let two = one + one;
+    let scaling = scaling_of(m);
+    let m00 = m[(0, 0)] / scaling[0];
+    let m11 = m[(1, 1)] / scaling[1];
+    let m22 = m[(2, 2)] / scaling[2];
+
+    Quaternion::from_slice(&[
+        scalar::copysign(
+            zero.max(one + m00 - m11 - m22).sqrt() / two,
+            m[(2, 1)] / scaling[1] - m[(1, 2)] / scaling[2],
+        ),
+        scalar::copysign(
+            zero.max(one - m00 + m11 - m22).sqrt() / two,
+            m[(0, 2)] / scaling[2] - m[(2, 0)] / scaling[0],
+        ),
+        scalar::copysign(
+            zero.max(one - m00 - m11 + m22).sqrt() / two,
+            m[(1, 0)] / scaling[0] - m[(0, 1)] / scaling[1],
+        ),
+        zero.max(one + m00 + m11 + m22).sqrt() / two,
+    ])
+}
+
+/// Inverts a `Mat4` that represents a valid transformation in TRS order (= translation * rotation * scale).
+/// This function is more efficient than `Mat4::invert` by leveraging the properties of a TRS matrix.
+///
+/// # Examples
+/// ```
+/// # use munum::{transform, Mat4, assert_float_eq};
+/// let mut m = <Mat4>::from_slice(&[2., 2., -1., 0., -2., 4., 4., 0., 6., -3., 6., 0., 1., 2., 3., 1.]);
+/// transform::invert_trs(&mut m);
+/// assert_float_eq!(m.as_ref(), &[2./9., -1./18., 2./27., 0., 2./9., 1./9., -1./27., 0., -1./9., 1./9., 2./27., 0., -1./3., -1./2., -2./9., 1.]);
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+pub fn invert_trs<T: Copy + Float + NumAssign>(m: &mut Mat4<T>) {
+    // Assume M is a TRS matrix:
+    // M = T * R * S = [RS  t]
+    //                 [0   1]
+    // Then the inverse of M is:
+    // M^-1 = [(RS)^-1  (RS)^-1 * -t]
+    //        [   0           1     ]
+    // Where: (RS)^-1 = S^-1 * R^-1 = S^-1 * RT = S^-1 * ((RS)(S^-1))T = S^-1 * (S^-1)T * (RS)T = S^-1 * S^-1 * (RS)T
+
+    let zero = T::zero();
+    let one = T::one();
+    let neg = scalar::neg();
+
+    // Extract S and t
+    let scaling = scaling_of(*m);
+    let translation = translation_of(*m);
+
+    // Calculate m = (RS)T
+    m.transpose();
+    m[(3, 0)] = zero;
+    m[(3, 1)] = zero;
+    m[(3, 2)] = zero;
+
+    // Premultiply S^-2 = 1/(S*S) to m
+    for c in 0..3 {
+        for r in 0..3 {
+            m[(r, c)] *= one / (scaling[r] * scaling[r]);
+        }
+    }
+
+    // Now m = (RS)^-1
+    // Apply translation = (m * -t) to m
+    let mut t = Vec4::from_vec3(translation, zero);
+    t *= neg;
+    t.mul_assign(*m, t);
+
+    m[(0, 3)] = t[0];
+    m[(1, 3)] = t[1];
+    m[(2, 3)] = t[2];
 }
 
 // endregion: Affine transformations
@@ -287,68 +295,70 @@ pub fn perspective<T: Copy + Float + NumAssign>(aspect: T, yfov: T, znear: T, zf
 
 // region: Camera matrices
 
-cfg_if::cfg_if! {
-if #[cfg(any(feature = "std", feature = "libm"))] {
+/// Calculates the `Mat4` model matrix for a camera at eye position looking at the center position with a given up direction.
+///
+/// # Examples
+/// ```
+/// # use munum::{transform, vec3, vec4, assert_float_eq};
+/// let m = transform::target_to(vec3(0_f32, 2., 0.), vec3(0., 0.6, 0.), vec3(0., 0., -1.));
+/// assert_float_eq!((m * vec4(0_f32, 2., 0., 1.)).as_ref(), &[0., 2., -2., 1.]);
+/// assert_float_eq!((m * vec4(0_f32, 2., -1., 1.)).as_ref(), &[0., 1., -2., 1.]);
+/// assert_float_eq!((m * vec4(1_f32, 2., 0., 1.)).as_ref(), &[1., 2., -2., 1.]);
+/// assert_float_eq!((m * vec4(0_f32, 1., 0., 1.)).as_ref(), &[0., 2., -1., 1.]);
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+pub fn target_to<T: Copy + Float + NumAssign>(
+    eye: Vec3<T>,
+    center: Vec3<T>,
+    up: Vec3<T>,
+) -> Mat4<T> {
+    let mut v = eye - center; // front
+    v.normalize();
+    let mut n = up.cross(v); // right
+    n.normalize();
+    let mut u = v.cross(n); // up
+    u.normalize();
 
-    /// Calculates the `Mat4` model matrix for a camera at eye position looking at the center position with a given up direction.
-    ///
-    /// # Examples
-    /// ```
-    /// # use munum::{transform, vec3, vec4, assert_float_eq};
-    /// let m = transform::target_to(vec3(0_f32, 2., 0.), vec3(0., 0.6, 0.), vec3(0., 0., -1.));
-    /// assert_float_eq!((m * vec4(0_f32, 2., 0., 1.)).as_ref(), &[0., 2., -2., 1.]);
-    /// assert_float_eq!((m * vec4(0_f32, 2., -1., 1.)).as_ref(), &[0., 1., -2., 1.]);
-    /// assert_float_eq!((m * vec4(1_f32, 2., 0., 1.)).as_ref(), &[1., 2., -2., 1.]);
-    /// assert_float_eq!((m * vec4(0_f32, 1., 0., 1.)).as_ref(), &[0., 2., -1., 1.]);
-    /// ```
-    pub fn target_to<T: Copy + Float + NumAssign>(eye: Vec3<T>, center: Vec3<T>, up: Vec3<T>) -> Mat4<T> {
-        let mut v = eye - center; // front
-        v.normalize();
-        let mut n = up.cross(v); // right
-        n.normalize();
-        let mut u = v.cross(n); // up
-        u.normalize();
-
-        let mut result = Mat4::identity();
-        for i in 0..3 {
-            result[(i, 0)] = n[i];
-            result[(i, 1)] = u[i];
-            result[(i, 2)] = v[i];
-            result[(i, 3)] = eye[i];
-        }
-        result
+    let mut result = Mat4::identity();
+    for i in 0..3 {
+        result[(i, 0)] = n[i];
+        result[(i, 1)] = u[i];
+        result[(i, 2)] = v[i];
+        result[(i, 3)] = eye[i];
     }
-    /// Calculate the 4x4 view matrix for a camera at eye position looking at the center position with a given up direction.
-    ///
-    /// # Examples
-    /// ```
-    /// # use munum::{transform, vec3, vec4, assert_float_eq};
-    /// let m = transform::look_at(vec3(0_f32, 2., 0.), vec3(0., 0.6, 0.), vec3(0., 0., -1.));
-    /// assert_float_eq!((m * vec4(0_f32, 2., 0., 1.)).as_ref(), &[0., 0., 0., 1.]);
-    /// assert_float_eq!((m * vec4(0_f32, 2., -1., 1.)).as_ref(), &[0., 1., 0., 1.]);
-    /// assert_float_eq!((m * vec4(1_f32, 2., 0., 1.)).as_ref(), &[1., 0., 0., 1.]);
-    /// assert_float_eq!((m * vec4(0_f32, 1., 0., 1.)).as_ref(), &[0., 0., -1., 1.]);
-    /// ```
-    pub fn look_at<T: Copy + Float + NumAssign>(eye: Vec3<T>, center: Vec3<T>, up: Vec3<T>) -> Mat4<T> {
-        let mut v = center - eye; // front
-        v.normalize();
-        let mut n = v.cross(up); // right
-        n.normalize();
-        let mut u = n.cross(v); // up
-        u.normalize();
-
-        let mut result = Mat4::identity();
-        for i in 0..3 {
-            result[(0, i)] = n[i];
-            result[(1, i)] = u[i];
-            result[(2, i)] = -v[i];
-        }
-        result[(0, 3)] = -n.dot(eye);
-        result[(1, 3)] = -u.dot(eye);
-        result[(2, 3)] = v.dot(eye);
-        result
-    }
+    result
 }
+
+/// Calculate the 4x4 view matrix for a camera at eye position looking at the center position with a given up direction.
+///
+/// # Examples
+/// ```
+/// # use munum::{transform, vec3, vec4, assert_float_eq};
+/// let m = transform::look_at(vec3(0_f32, 2., 0.), vec3(0., 0.6, 0.), vec3(0., 0., -1.));
+/// assert_float_eq!((m * vec4(0_f32, 2., 0., 1.)).as_ref(), &[0., 0., 0., 1.]);
+/// assert_float_eq!((m * vec4(0_f32, 2., -1., 1.)).as_ref(), &[0., 1., 0., 1.]);
+/// assert_float_eq!((m * vec4(1_f32, 2., 0., 1.)).as_ref(), &[1., 0., 0., 1.]);
+/// assert_float_eq!((m * vec4(0_f32, 1., 0., 1.)).as_ref(), &[0., 0., -1., 1.]);
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+pub fn look_at<T: Copy + Float + NumAssign>(eye: Vec3<T>, center: Vec3<T>, up: Vec3<T>) -> Mat4<T> {
+    let mut v = center - eye; // front
+    v.normalize();
+    let mut n = v.cross(up); // right
+    n.normalize();
+    let mut u = n.cross(v); // up
+    u.normalize();
+
+    let mut result = Mat4::identity();
+    for i in 0..3 {
+        result[(0, i)] = n[i];
+        result[(1, i)] = u[i];
+        result[(2, i)] = -v[i];
+    }
+    result[(0, 3)] = -n.dot(eye);
+    result[(1, 3)] = -u.dot(eye);
+    result[(2, 3)] = v.dot(eye);
+    result
 }
 
 // endregion: Camera matrices

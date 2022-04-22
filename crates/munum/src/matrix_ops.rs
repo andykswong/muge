@@ -280,53 +280,50 @@ impl<T: Copy + NumAssign, const N: usize> Matrix<T, N, 1> {
     }
 }
 
-cfg_if::cfg_if! {
-if #[cfg(any(feature = "std", feature = "libm"))] {
-    impl<T: Copy + Float + NumAssign, const N: usize> Matrix<T, N, 1> {
-        /// Calculates the length of a column matrix aka vector.
-        ///
-        /// # Examples
-        /// ```
-        /// # use munum::Matrix;
-        /// assert_eq!(Matrix::<f32, 3, 1>::from_slice(&[3., 4., 12.]).len(), 13.);
-        /// ```
-        #[inline]
-        pub fn len(&self) -> T {
-            self.dot(*self).sqrt()
-        }
+#[cfg(any(feature = "std", feature = "libm"))]
+impl<T: Copy + Float + NumAssign, const N: usize> Matrix<T, N, 1> {
+    /// Calculates the length of a column matrix aka vector.
+    ///
+    /// # Examples
+    /// ```
+    /// # use munum::Matrix;
+    /// assert_eq!(Matrix::<f32, 3, 1>::from_slice(&[3., 4., 12.]).len(), 13.);
+    /// ```
+    #[inline]
+    pub fn len(&self) -> T {
+        self.dot(*self).sqrt()
+    }
 
-        /// Normizalizes this column matrix aka vector.
-        ///
-        /// # Examples
-        /// ```
-        /// # use munum::Matrix;
-        /// let mut v = Matrix::<f32, 2, 1>::from_slice(&[3., 4.]);
-        /// v.normalize();
-        /// assert_eq!(*v.as_ref(), [0.6, 0.8]);
-        /// ```
-        pub fn normalize(&mut self) {
-            let len = self.len();
-            if len != T::zero() {
-                *self /= len;
-            }
-        }
-
-        /// Returns a normalized version of this vector.
-        ///
-        /// # Examples
-        /// ```
-        /// # use munum::Matrix;
-        /// let mut v = Matrix::<f32, 2, 1>::from_slice(&[3., 4.]);
-        /// assert_eq!(*v.normalized().as_ref(), [0.6, 0.8]);
-        /// ```
-        #[inline]
-        pub fn normalized(&self) -> Self {
-            let mut v = *self;
-            v.normalize();
-            v
+    /// Normizalizes this column matrix aka vector.
+    ///
+    /// # Examples
+    /// ```
+    /// # use munum::Matrix;
+    /// let mut v = Matrix::<f32, 2, 1>::from_slice(&[3., 4.]);
+    /// v.normalize();
+    /// assert_eq!(*v.as_ref(), [0.6, 0.8]);
+    /// ```
+    pub fn normalize(&mut self) {
+        let len = self.len();
+        if len != T::zero() {
+            *self /= len;
         }
     }
-}
+
+    /// Returns a normalized version of this vector.
+    ///
+    /// # Examples
+    /// ```
+    /// # use munum::Matrix;
+    /// let mut v = Matrix::<f32, 2, 1>::from_slice(&[3., 4.]);
+    /// assert_eq!(*v.normalized().as_ref(), [0.6, 0.8]);
+    /// ```
+    #[inline]
+    pub fn normalized(&self) -> Self {
+        let mut v = *self;
+        v.normalize();
+        v
+    }
 }
 
 // endregion: Vector Ops

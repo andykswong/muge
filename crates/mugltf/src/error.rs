@@ -2,15 +2,12 @@ use super::Id;
 use alloc::boxed::Box;
 use core::fmt;
 
-cfg_if::cfg_if! {
-if #[cfg(feature = "std")] {
-    /// Error type.
-    pub type Error = dyn std::error::Error;
-} else {
-    /// Error type.
-    pub type Error = dyn core::any::Any;
-}
-}
+/// Error type.
+#[cfg(feature = "std")]
+pub type Error = dyn std::error::Error;
+/// Error type.
+#[cfg(not(feature = "std"))]
+pub type Error = dyn core::any::Any;
 
 /// Error when parsing a glTF / GLB file.
 #[derive(Debug, Default)]

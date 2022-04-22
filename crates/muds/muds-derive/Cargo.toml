@@ -1,0 +1,22 @@
+[package]
+name = "muds-derive"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.60"
+authors = ["Andy K. S. Wong <andykswong@outlook.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/andykswong/muge"
+homepage = "https://github.com/andykswong/muge/tree/main/crates/muds"
+documentation = "https://docs.rs/muds"
+description = "Minimalistic Data Structure Library for Games in Rust"
+categories = ["data-structures", "game-development", "game-engines", "no-std"]
+keywords = ["ecs", "entity", "gamedev"]
+
+[dependencies]
+proc-macro2 = "1.0"
+syn = "1.0"
+quote = "1.0"
+
+[lib]
+proc-macro = true

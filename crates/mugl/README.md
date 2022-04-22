@@ -13,7 +13,7 @@
 ## Install
 ```toml
 [dependencies]
-mugl = "0.1.0"
+mugl = "0.1"
 ```
 Features:
 - `backend-webgl` - enables WebGL 2.0 backend for WASM. Requires [`mugl/wasm`](https://github.com/andykswong/mugl) npm package for glue code. (see [usage](#hello-world))

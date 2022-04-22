@@ -13,7 +13,7 @@
 ## Install
 ```toml
 [dependencies]
-mugltf = "0.1.0"
+mugltf = "0.1"
 ```
 Features:
 - `std` - (default) enables `std` support.
