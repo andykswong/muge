@@ -8,7 +8,7 @@ readme = "README.md"
 repository = "https://github.com/andykswong/muge"
 homepage = "https://github.com/andykswong/muge/tree/main/crates/mugl"
 documentation = "https://docs.rs/mugl"
-description = "Minimalistic Low-Level Graphics Library for Rust and WebAssembly"
+description = "Minimalistic Low-level WebGL 2.0 / WebGPU 3D graphics abstraction layer for Rust and WebAssembly"
 categories = ["graphics", "no-std", "rendering", "wasm", "web-programming"]
 keywords = ["3d", "webassembly", "javascript", "webgl", "webgpu"]
 

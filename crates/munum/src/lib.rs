@@ -1,3 +1,5 @@
+//! Micro Library for 3D Math
+
 #![no_std]
 
 #[cfg(test)]

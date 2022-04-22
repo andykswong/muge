@@ -1,3 +1,5 @@
+//! Minimalistic Low-level WebGL 2.0 / WebGPU 3D graphics abstraction layer for Rust and WebAssembly
+
 #![no_std]
 
 extern crate alloc;

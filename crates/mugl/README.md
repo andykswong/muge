@@ -27,15 +27,17 @@ See Docs.rs: https://docs.rs/mugl
 ## Usage
 
 ### [Examples](./examples)
-Several examples can be found in this repository:
-- [basic](./examples/app/basic.rs): ```cargo run --features backend-wgpu --example basic```
-- [instancing](./examples/app/instancing.rs): ```cargo run --features backend-wgpu --example instancing```
-- [stencil](./examples/app/stencil.rs): ```cargo run --features backend-wgpu --example stencil```
+Several examples can be found in this repository. Use npm to run the below examples on web: ```npm install && npm start```
 
-Use npm to run the above examples on web: ```npm install && npm start```
+| Screenshot | Source | Run Script |
+|------------|--------|------------|
+|![basic](./screenshots/basic.png)|[basic](./examples/app/basic.rs)|```cargo run --features backend-wgpu --example basic```|
+|![basic](./screenshots/instancing.png)|[instancing](./examples/app/instancing.rs)|```cargo run --features backend-wgpu --example instancing```|
+|![basic](./screenshots/stencil.png)|[stencil](./examples/app/stencil.rs)|```cargo run --features backend-wgpu --example stencil```|
 
 ### Hello World
-Below is the minimal WASM app to draw a triangle using the WebGL backend (See full example code [here](./examples/app/basic.rs)):
+
+Below is the minimal WASM app to draw the triangle in the basic example using the WebGL backend (See full example code [here](./examples/app/basic.rs)):
 ```rust
 use mugl::{prelude::*, webgl::*};
 
