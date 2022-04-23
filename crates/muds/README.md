@@ -58,10 +58,10 @@ let mut registry = Registry::default();
 registry.register_archetype::<Ent, Cons!(Pos, Vel)>();
 
 // 3. Insert entities/components to mut storage.
-// storage/storage_mut returns cons of collection types.
-// Each component storage can be retrieved either as immutable (&C) or mutable (&mut C).
+// registry.storage returns cons of collection types.
+// Each entity/component storage can be retrieved either as immutable (&C) or mutable (&mut C).
 {
-  let cons!(mut ent, mut pos, mut vel) = registry.storage_mut::<Ent, Cons!(&mut Pos, &mut Vel)>();
+  let cons!(mut ent, mut pos, mut vel) = registry.storage::<&mut Ent, Cons!(&mut Pos, &mut Vel)>();
   for i in 0..10 {
       let eid = ent.insert(E);
       pos.insert(eid, Pos(i * 2, i * 2 + 1));
@@ -72,7 +72,7 @@ registry.register_archetype::<Ent, Cons!(Pos, Vel)>();
 // 4. Storages are just standard Map types that can be iterated.
 // Use MapJoin trait to jointly iterate components as cons.
 {
-  let cons!(_ent, mut pos, vel) = registry.storage::<Ent, Cons!(&mut Pos, &Vel)>();
+  let cons!(_ent, mut pos, vel) = registry.storage::<&Ent, Cons!(&mut Pos, &Vel)>();
   for cons!(_eid, v, p) in pos.iter_mut().cons().map_join(&*vel) {
       p.0 += v.0;
       p.1 += v.1;

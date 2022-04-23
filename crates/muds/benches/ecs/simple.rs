@@ -45,7 +45,7 @@ impl IterBenchmark {
     }
 
     pub fn run(&mut self) {
-        let cons!(_e, mut pos, vel) = self.0.storage::<Node, Cons!(&mut Position, &Velocity)>();
+        let cons!(_e, mut pos, vel) = self.0.storage::<&Node, Cons!(&mut Position, &Velocity)>();
 
         for cons!(_id, v, p) in pos.iter_mut().cons().map_join(&*vel) {
             p.0 += v.0;
@@ -59,7 +59,7 @@ fn create_insert_registry() -> Registry {
     registry.register_archetype::<Node, Cons!(Transform, Position, Rotation, Velocity)>();
 
     {
-        let cons!(mut e, mut trans, mut pos, mut rot, mut vel) = registry.storage_mut::<Node, Cons!(&mut Transform, &mut Position, &mut Rotation, &mut Velocity)>();
+        let cons!(mut e, mut trans, mut pos, mut rot, mut vel) = registry.storage::<&mut Node, Cons!(&mut Transform, &mut Position, &mut Rotation, &mut Velocity)>();
 
         e.reserve(ENTITIES);
         trans.map_mut().reserve(ENTITIES);

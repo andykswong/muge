@@ -32,8 +32,8 @@ Several examples can be found in this repository. Use npm to run the below examp
 | Screenshot | Source | Run Script |
 |------------|--------|------------|
 |![basic](./screenshots/basic.png)|[basic](./examples/app/basic.rs)|```cargo run --features backend-wgpu --example basic```|
-|![basic](./screenshots/instancing.png)|[instancing](./examples/app/instancing.rs)|```cargo run --features backend-wgpu --example instancing```|
-|![basic](./screenshots/stencil.png)|[stencil](./examples/app/stencil.rs)|```cargo run --features backend-wgpu --example stencil```|
+|![instancing](./screenshots/instancing.png)|[instancing](./examples/app/instancing.rs)|```cargo run --features backend-wgpu --example instancing```|
+|![stencil](./screenshots/stencil.png)|[stencil](./examples/app/stencil.rs)|```cargo run --features backend-wgpu --example stencil```|
 
 ### Hello World
 

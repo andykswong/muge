@@ -13,7 +13,7 @@ macro_rules! create_entities {
             struct $variants(f32);
             $registry.register_component::<Data, $variants>();
             {
-                let cons!(mut entities, mut variants) = $registry.storage_mut::<Data, Cons!(&mut $variants)>();
+                let cons!(mut entities, mut variants) = $registry.storage::<&mut Data, Cons!(&mut $variants)>();
 
                 for _i in 0..20 {
                     let id = entities.insert(Data(1.0));

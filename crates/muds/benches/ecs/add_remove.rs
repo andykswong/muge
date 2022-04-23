@@ -25,7 +25,7 @@ impl Benchmark {
         registry.register_archetype::<E, Cons!(A, B)>();
 
         {
-            let cons!(mut e, mut a) = registry.storage_mut::<E, Cons!(&mut A)>();
+            let cons!(mut e, mut a) = registry.storage::<&mut E, Cons!(&mut A)>();
 
             e.reserve(ENTITIES);
             a.map_mut().reserve(ENTITIES);
@@ -44,7 +44,7 @@ impl Benchmark {
     }
 
     pub fn run(&mut self) {
-        let cons!(e, mut b) = self.0.storage::<E, Cons!(&mut B)>();
+        let cons!(e, mut b) = self.0.storage::<&E, Cons!(&mut B)>();
 
         for (id, _) in e.iter() {
             b.insert(*id, B(0.0));
