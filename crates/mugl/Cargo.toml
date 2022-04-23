@@ -32,7 +32,7 @@ wgpu = { version = "0.12", optional = true }
 
 [dev-dependencies]
 munum = { path = "../munum", version = "0.1" }
-bytemuck = { version = "1.8", features = [ "derive" ] }
+bytemuck = { version = "1.9", features = [ "derive" ] }
 env_logger = "0.9"
 image = { version = "0.24", default-features = false, features = ["png"] }
 lazy_static = "1.4"

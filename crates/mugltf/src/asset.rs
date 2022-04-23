@@ -3,6 +3,7 @@ use crate::{
     ParseGltfError, ParseGltfErrorKind,
 };
 use alloc::{borrow::Cow, boxed::Box, vec::Vec};
+use mugl::Extent2D;
 
 /// glTF in ASCII
 #[allow(dead_code)]
@@ -22,7 +23,7 @@ enum GLBChunk {
 /// See: <https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html>
 #[derive(Debug)]
 #[repr(C)]
-pub struct GltfAsset<'a, ImageData = Vec<u8>> {
+pub struct GltfAsset<'a, ImageData = (Vec<u8>, Extent2D)> {
     /// glTF model
     pub gltf: Gltf,
     /// Binary chunk for GLB

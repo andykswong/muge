@@ -20,5 +20,7 @@ pub use markers::*;
 pub mod prelude {
     pub use super::collections::traits::*;
     pub use super::ecs::prelude::*;
+    pub use super::genindex::GenIndex;
+    pub use super::markers::*;
     pub use crate::{cons, Cons};
 }

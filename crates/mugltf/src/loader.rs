@@ -42,6 +42,7 @@ mod file_loader {
         error::{ImageFormatHint, UnsupportedError, UnsupportedErrorKind},
         ImageError, ImageFormat, ImageResult,
     };
+    use mugl::Extent2D;
     use std::{fs::File, io::Read, path::PathBuf};
 
     /// Loader of glTF resources from file system.
@@ -59,7 +60,7 @@ mod file_loader {
     #[async_trait(?Send)]
     impl GltfResourceLoader for GltfResourceFileLoader {
         type Error = Box<Error>;
-        type ImageData = Vec<u8>;
+        type ImageData = (Vec<u8>, Extent2D);
 
         #[inline]
         fn set_path(&mut self, path: &str) {
@@ -75,11 +76,14 @@ mod file_loader {
         }
 
         async fn get_image(&self, uri: &str) -> Result<Self::ImageData, Self::Error> {
-            if let Some(data) = try_read_data_url(uri, true)? {
-                Ok(data)
+            let data = if let Some(data) = try_read_data_url(uri, true)? {
+                data
             } else {
-                Ok(read_file(&self.path, uri)?)
-            }
+                read_file(&self.path, uri)?
+            };
+            let dynimage = image::load_from_memory(data.as_slice())?;
+            let size = Extent2D(dynimage.width(), dynimage.height());
+            Ok((dynimage.into_bytes(), size))
         }
 
         async fn decode_image(
@@ -89,7 +93,8 @@ mod file_loader {
         ) -> Result<Self::ImageData, Self::Error> {
             let format = get_image_format(mime_type)?;
             let dynimage = image::load_from_memory_with_format(img, format)?;
-            Ok(dynimage.into_bytes())
+            let size = Extent2D(dynimage.width(), dynimage.height());
+            Ok((dynimage.into_bytes(), size))
         }
     }
 
