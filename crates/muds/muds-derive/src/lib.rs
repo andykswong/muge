@@ -88,7 +88,7 @@ fn impl_component(ast: &DeriveInput) -> proc_macro2::TokenStream {
         .unwrap_or_else(|| parse_quote!(muds::ecs::storage::VecStorage));
 
     quote! {
-        impl <#(#type_params),* Entity: muds::ecs::Entity + 'static> muds::ecs::Component<Entity> for #name #ty_generics #where_clause {
+        impl <Entity: muds::ecs::Entity + 'static, #(#type_params),*> muds::ecs::Component<Entity> for #name #ty_generics #where_clause {
             type Storage = #storage<Entity, Self>;
         }
     }
