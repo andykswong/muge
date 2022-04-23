@@ -19,12 +19,6 @@ pub trait ResourceLocator<'a, R: Resource> {
     /// Mutable resource reference type.
     type RefMut: DerefMut<Target = R> + 'a;
 
-    /// Registers a resource.
-    fn register(&mut self, value: R);
-
-    /// Returns `true` if resource type `R` is registered.
-    fn has(&self) -> bool;
-
     /// Gets resource of type `R`.
     fn get(&'a self) -> Self::Ref;
 
@@ -42,13 +36,7 @@ pub trait Resources {
     /// let mut registry = Registry::default();
     /// registry.register_resource(1u32);
     /// ```
-    #[inline]
-    fn register_resource<R: Resource>(&mut self, value: R)
-    where
-        for<'a> Self: ResourceLocator<'a, R>,
-    {
-        self.register(value)
-    }
+    fn register_resource<R: Resource>(&mut self, value: R);
 
     /// Returns if a resource type is registered.
     ///
@@ -59,13 +47,7 @@ pub trait Resources {
     /// registry.register_resource(1u32);
     /// assert!(registry.has_resource::<u32>());
     /// ```
-    #[inline]
-    fn has_resource<R: Resource>(&self) -> bool
-    where
-        for<'a> Self: ResourceLocator<'a, R>,
-    {
-        ResourceLocator::<R>::has(self)
-    }
+    fn has_resource<R: Resource>(&self) -> bool;
 
     /// Gets a resource.
     ///
@@ -117,11 +99,8 @@ pub trait Entities: Resources {
     /// registry.register_entity::<Pos>();
     /// ```
     #[inline]
-    fn register_entity<E: Entity>(&mut self)
-    where
-        for<'a> Self: ResourceLocator<'a, E::Storage>,
-    {
-        self.register(E::Storage::default())
+    fn register_entity<E: Entity>(&mut self) {
+        self.register_resource(E::Storage::default())
     }
 
     /// Returns if an entity type is registered.
@@ -137,11 +116,8 @@ pub trait Entities: Resources {
     /// assert!(registry.has_entity::<Pos>());
     /// ```
     #[inline]
-    fn has_entity<E: Entity>(&self) -> bool
-    where
-        for<'a> Self: ResourceLocator<'a, E::Storage>,
-    {
-        ResourceLocator::<E::Storage>::has(self)
+    fn has_entity<E: Entity>(&self) -> bool {
+        self.has_resource::<E::Storage>()
     }
 
     /// Gets an entity storage.
@@ -207,15 +183,12 @@ pub trait Components: Resources {
     /// registry.register_component::<E, Pos>();
     /// ```
     #[inline]
-    fn register_component<E: Entity, C: Component<E>>(&mut self)
-    where
-        for<'a> Self: ResourceLocator<'a, C::Storage>,
-    {
-        self.register(Default::default())
+    fn register_component<E: Entity, C: Component<E>>(&mut self) {
+        self.register_resource(C::Storage::default())
     }
 
     /// Returns if a component type is registered.
-    /// 
+    ///
     /// # Examples
     /// ```rust
     /// # use muds::ecs::{Registry, Component, Components, Entity, Entities, storage::{ArenaStorage, VecStorage}};
@@ -230,11 +203,8 @@ pub trait Components: Resources {
     /// assert!(registry.has_component::<E, Pos>());
     /// ```
     #[inline]
-    fn has_component<E: Entity, C: Component<E>>(&self) -> bool
-    where
-        for<'a> Self: ResourceLocator<'a, C::Storage>,
-    {
-        ResourceLocator::<C::Storage>::has(self)
+    fn has_component<E: Entity, C: Component<E>>(&self) -> bool {
+        self.has_resource::<C::Storage>()
     }
 
     /// Gets a component storage.

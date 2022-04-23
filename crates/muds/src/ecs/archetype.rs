@@ -53,10 +53,9 @@ pub trait Archetypes: Entities + Components + Sized {
     #[inline]
     fn register_archetype<E: Entity, C: Cons>(&mut self)
     where
-        for<'a> Self: ResourceLocator<'a, E::Storage>,
         Archetype<E, C>: RegisterComponents<Self>,
     {
-        self.register(E::Storage::default());
+        self.register_entity::<E>();
         self.register_components::<E, C>();
     }
 
@@ -189,7 +188,6 @@ impl<R: Components, E: Entity> RegisterComponents<R> for Archetype<E, ()> {
 impl<R: Components, E: Entity, C: Component<E>, Tail: Cons> RegisterComponents<R>
     for Archetype<E, (C, Tail)>
 where
-    for<'a> R: ResourceLocator<'a, C::Storage>,
     Archetype<E, Tail>: RegisterComponents<R>,
 {
     #[inline(always)]

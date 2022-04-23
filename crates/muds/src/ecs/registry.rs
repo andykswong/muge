@@ -1,6 +1,6 @@
 //! Registry type.
 
-use super::resource::{ResourceLocator, Resources};
+use super::resource::{Resource, ResourceLocator, Resources};
 use crate::collections::AnyMap;
 use core::{
     any::Any,
@@ -81,16 +81,6 @@ impl<'a, R: Any> ResourceLocator<'a, R> for Registry {
     type RefMut = RefMut<'a, R>;
 
     #[inline]
-    fn register(&mut self, value: R) {
-        self.register::<R>(value)
-    }
-
-    #[inline]
-    fn has(&self) -> bool {
-        self.has::<R>()
-    }
-
-    #[inline]
     fn get(&'a self) -> Self::Ref {
         self.get::<R>()
     }
@@ -101,4 +91,14 @@ impl<'a, R: Any> ResourceLocator<'a, R> for Registry {
     }
 }
 
-impl Resources for Registry {}
+impl Resources for Registry {
+    #[inline]
+    fn register_resource<R: Resource>(&mut self, value: R) {
+        self.register(value)
+    }
+
+    #[inline]
+    fn has_resource<R: Resource>(&self) -> bool {
+        self.has::<R>()
+    }
+}
