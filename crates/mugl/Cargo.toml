@@ -1,6 +1,6 @@
 [package]
 name = "mugl"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Andy K. S. Wong <andykswong@outlook.com>"]
 license = "MIT"
@@ -9,8 +9,8 @@ repository = "https://github.com/andykswong/muge"
 homepage = "https://github.com/andykswong/muge/tree/main/crates/mugl"
 documentation = "https://docs.rs/mugl"
 description = "Minimalistic Low-level WebGL 2.0 / WebGPU 3D graphics abstraction layer for Rust and WebAssembly"
-categories = ["graphics", "no-std", "rendering", "wasm", "web-programming"]
-keywords = ["3d", "webassembly", "javascript", "webgl", "webgpu"]
+categories = ["graphics", "no-std", "rendering", "rendering::graphics-api", "wasm"]
+keywords = ["3d", "javascript", "webgl", "webgpu", "muge"]
 
 [package.metadata.docs.rs]
 features = ["std", "serde", "backend-wgpu", "backend-webgl"]

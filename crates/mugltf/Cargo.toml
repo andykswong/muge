@@ -1,6 +1,6 @@
 [package]
 name = "mugltf"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 rust-version = "1.60"
 authors = ["Andy K. S. Wong <andykswong@outlook.com>"]
@@ -10,8 +10,8 @@ repository = "https://github.com/andykswong/muge"
 homepage = "https://github.com/andykswong/muge/tree/main/crates/mugltf"
 documentation = "https://docs.rs/mugltf"
 description = "Minimal glTF 2.0 asset loader for Rust"
-categories = ["graphics", "parsing", "wasm"]
-keywords = ["3d", "model", "asset", "gltf", "scene"]
+categories = ["graphics", "parsing", "rendering::data-formats", "wasm"]
+keywords = ["3d", "asset", "gltf", "scene", "muge"]
 
 [package.metadata.docs.rs]
 features = ["std", "serde", "file-loader", "gltf-name", "gltf-extras", "gltf-extensions"]

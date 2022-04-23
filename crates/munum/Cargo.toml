@@ -1,6 +1,6 @@
 [package]
 name = "munum"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Andy K. S. Wong <andykswong@outlook.com>"]
 license = "MIT"
@@ -10,7 +10,7 @@ homepage = "https://github.com/andykswong/muge/tree/main/crates/munum"
 documentation = "https://docs.rs/munum"
 description = "Rust Micro Library for 3D Math"
 categories = ["mathematics", "no-std", "wasm"]
-keywords = ["math", "matrix", "3d"]
+keywords = ["math", "matrix", "3d", "muge"]
 
 [package.metadata.docs.rs]
 features = ["std", "serde"]
