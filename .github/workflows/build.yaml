@@ -15,8 +15,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Build
       run: cargo build --verbose
+
     - name: Run tests
       run: cargo test --verbose
     - name: Run all-features tests
@@ -27,3 +29,9 @@ jobs:
       run: cargo test --verbose --features serde
     - name: Run no_std serde tests
       run: cargo test --verbose --no-default-features --features libm,gltf-name,serde
+
+    - name: Install wasm-pack
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    - name: Run mugltf wasm tests
+      working-directory: ./crates/mugltf
+      run: wasm-pack test --headless --chrome --all-features
