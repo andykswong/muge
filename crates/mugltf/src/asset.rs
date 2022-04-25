@@ -146,15 +146,15 @@ impl<'a, ImageData> GltfAsset<'a, ImageData> {
         let asset = if content.len() < GLB_HEADER_LENGTH || GLB_HEADER_MAGIC != &content[0..4] {
             // Definitely not GLB, parse content as glTF JSON
             let gltf_str = str::from_utf8(content.as_slice()).map_err(|err| {
-                LoadGltfResourceError::new(LoadGltfResourceErrorKind::ParseGltfError, err)
+                LoadGltfResourceError::new::<Box<Error>>(LoadGltfResourceErrorKind::ParseGltfError, Box::new(err))
             })?;
             GltfAsset::parse_gltf(gltf_str).map_err(|err| {
-                LoadGltfResourceError::new(LoadGltfResourceErrorKind::ParseGltfError, err)
+                LoadGltfResourceError::new::<Box<Error>>(LoadGltfResourceErrorKind::ParseGltfError, Box::new(err))
             })?
         } else {
             // Header magic matched, can only be GLB
             GltfAsset::parse_glb(content.as_slice()).map_err(|err| {
-                LoadGltfResourceError::new(LoadGltfResourceErrorKind::ParseGltfError, err)
+                LoadGltfResourceError::new::<Box<Error>>(LoadGltfResourceErrorKind::ParseGltfError, Box::new(err))
             })?
         };
 
