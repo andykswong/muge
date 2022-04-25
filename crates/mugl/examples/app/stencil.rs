@@ -143,7 +143,7 @@ impl App for StencilExample {
             sky,
             image_loaded: false,
             #[cfg(all(target_family = "wasm", feature = "backend-webgl"))]
-            image: mugl::webgl::ImageSource::from_uri(crate::common::APP_ID, "airplane.png"),
+            image: mugl::webgl::ImageSource::from_uri("airplane.png"),
         }
     }
 

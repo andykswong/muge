@@ -10,32 +10,29 @@ use crate::primitive::Extent2D;
 
 static mut TASKS: Vec<Rc<RefCell<Option<Waker>>>> = Vec::new();
 
-/// JS/DOM task queue. Apps must call `Tasks::poll()` to allow JS futures to make progress.
-pub struct Tasks;
-
-impl Tasks {
-    /// Polls any pending task.
-    pub fn poll() {
-        for waker in unsafe { TASKS.drain(..) } {
-            if let Some(waker) = waker.borrow_mut().take() {
-                waker.wake();
-            }
-        }
-    }
-}
-
 /// A JS future object.
+/// Apps must call [JsFuture::poll()] to allow [JsFuture]s to make progress.
 #[derive(Debug)]
-pub(crate) struct JsFuture {
+pub struct JsFuture {
     pub(crate) id: FutureId,
     pub(crate) waker: Rc<RefCell<Option<Waker>>>,
 }
 
 impl JsFuture {
-    pub fn new(id: FutureId) -> Self {
+    /// Creates a new [JSFuture] from id.
+    pub(crate) fn new(id: FutureId) -> Self {
         Self {
             id,
             waker: Default::default(),
+        }
+    }
+
+    /// Polls any pending future.
+    pub fn poll() {
+        for waker in unsafe { TASKS.drain(..) } {
+            if let Some(waker) = waker.borrow_mut().take() {
+                waker.wake();
+            }
         }
     }
 }
@@ -68,9 +65,9 @@ pub struct Canvas {
 
 impl Canvas {
     /// Gets a canvas by ID.
-    pub fn from_id(context: ContextId, id: &str) -> Self {
+    pub fn from_id(id: &str) -> Self {
         Self {
-            id: unsafe { mugl::get_canvas_by_id(context, id.into()) },
+            id: unsafe { mugl::get_canvas_by_id(ContextId::get(), id.into()) },
         }
     }
 
@@ -92,21 +89,21 @@ pub struct ImageSource {
 }
 
 impl ImageSource {
-    /// Loads an image from URI.
-    pub fn from_uri(context: ContextId, uri: &str) -> Self {
+    /// Loads an [ImageSource] from URI.
+    pub fn from_uri(uri: &str) -> Self {
         Self {
-            id: unsafe { mugl::create_image(context, uri.into()) },
+            id: unsafe { mugl::create_image(ContextId::get(), uri.into()) },
         }
     }
 
-    /// Gets an image by ID.
-    pub fn from_id(context: ContextId, id: &str) -> Self {
+    /// Gets an [ImageSource] by ID.
+    pub fn from_id(id: &str) -> Self {
         Self {
-            id: unsafe { mugl::get_image_by_id(context, id.into()) },
+            id: unsafe { mugl::get_image_by_id(ContextId::get(), id.into()) },
         }
     }
 
-    /// Gets the size of the image.
+    /// Gets the size of the [ImageSource].
     pub fn size(&self) -> Extent2D {
         unsafe {
             Extent2D(

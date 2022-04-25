@@ -275,7 +275,7 @@ impl Default for TextureFormat {
 
 impl TextureFormat {
     /// Returns if the texture format is a depth/stencil format
-    pub fn is_depth_stencil(&self) -> bool {
+    pub const fn is_depth_stencil(&self) -> bool {
         match self {
             TextureFormat::DEPTH16
             | TextureFormat::DEPTH24
@@ -287,7 +287,7 @@ impl TextureFormat {
     }
 
     /// Returns the byte size of the texture format
-    pub fn size(&self) -> u32 {
+    pub const fn size(&self) -> u32 {
         match self {
             TextureFormat::R8
             | TextureFormat::R8SNORM

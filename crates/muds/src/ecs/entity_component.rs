@@ -12,7 +12,7 @@ pub type GenIndexType = crate::IndexU64;
 #[cfg(not(feature = "index-u64"))]
 pub type GenIndexType = crate::IndexF64;
 
-/// Entity ID type.
+/// [Entity] ID type.
 pub type EntityId<E> = TypedIndex<E, GenIndexType>;
 
 /// Entity type.
@@ -21,7 +21,7 @@ pub trait Entity: Sized {
     type Storage: EntityStorage<Self>;
 }
 
-/// Entity storage trait type.
+/// [Entity] storage trait type.
 pub trait EntityStorage<E: Entity>:
     Default + Arena<Key = EntityId<E>, Value = E> + for<'a> IterableMapMut<'a> + 'static
 {
@@ -33,8 +33,14 @@ pub trait Component<E: Entity>: Sized {
     type Storage: ComponentStorage<E, Self>;
 }
 
-/// Entity component storage trait type.
+/// [Component] storage trait type.
 pub trait ComponentStorage<E: Entity, C: Component<E>>:
     Default + MapMut<Key = EntityId<E>, Value = C> + for<'a> IterableMapMut<'a> + 'static
 {
 }
+
+/// Type alias for the storage of an [Entity].
+pub type EntityStorageOf<E> = <E as Entity>::Storage;
+
+/// Type alias for the storage of a [Component].
+pub type ComponentStorageOf<E, C> = <C as Component<E>>::Storage;

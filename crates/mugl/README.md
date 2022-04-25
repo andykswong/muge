@@ -18,7 +18,8 @@ mugl = "0.1"
 Features:
 - `backend-webgl` - enables WebGL 2.0 backend for WASM. Requires [`mugl/wasm`](https://github.com/andykswong/mugl) npm package for glue code. (see [usage](#hello-world))
 - `backend-wgpu` - enables WebGPU backend based on `wgpu`
-- `std` - enables `std` support.
+- `std` - enables `std` support
+- `wasm-bindgen` enables `wasm-bindgen` integration
 - `serde` - enables `serde` serialize/deserialize implementations
 
 ## [Documentation](https://docs.rs/mugl)
@@ -41,14 +42,16 @@ Below is the minimal WASM app to draw the triangle in the basic example using th
 ```rust
 use mugl::{prelude::*, webgl::*};
 
-// 0. Define a unique app ID to use in JS glue code
+// (Optional) Define a unique app ID to use in JS glue code. Required only when multiple WASM modules use mugl.
 #[no_mangle]
-pub extern "C" fn app_id() -> ContextId { ContextId::new(123.) }
+pub extern "C" fn app_id() -> ContextId { ContextId::set(123); ContextId::get() }
 
 #[no_mangle]
 pub extern "C" fn render() {
+    app_id(); // Make sure we call ContextId::set() before any API call.
+
     // 1. Create device from canvas of id "canvas"
-    let canvas = Canvas::from_id(app_id(), "canvas");
+    let canvas = Canvas::from_id("canvas");
     let device = WebGL::request_device(&canvas, WebGLContextAttribute::default(), WebGL2Features::empty())
         .expect("WebGL 2.0 is unsupported");
 
@@ -133,8 +136,7 @@ Below is the JS glue code to initialize the WASM app:
 import { set_context_memory } from "mugl/wasm";
 import { memory, app_id, render } from "hello_world.wasm";
 
-// 0. Init
-set_context_memory(app_id(), memory);
+set_context_memory(app_id(), memory); // Required only if `wasm-bindgen` feature is not enabled
 
 // 1. Create canvas with id "canvas"
 const canvas = document.createElement("canvas");

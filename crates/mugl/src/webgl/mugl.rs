@@ -10,8 +10,17 @@ use crate::primitive::{
     BufferSize, Color, Extent2D, Extent3D, MipmapHint, Origin2D, Origin3D, ShaderStage,
 };
 
+#[cfg(feature = "wasm-bindgen")]
+#[wasm_bindgen::prelude::wasm_bindgen(module = "mugl/wasm")]
+extern "C" {
+    /// Sets the context memory.
+    #[wasm_bindgen]
+    pub fn set_context_memory(context: f64, memory: wasm_bindgen::JsValue);
+}
+
 #[link(wasm_import_module = "mugl/wasm")]
 extern "C" {
+
     /// Gets the status of the future
     pub fn get_future_status(future: FutureId) -> FutureStatus;
 

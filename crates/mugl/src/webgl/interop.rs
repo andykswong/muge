@@ -11,6 +11,9 @@ use crate::primitive::{
     PrimitiveTopology, ShaderStage, TextureFormat, VertexStepMode,
 };
 
+/// The context ID.
+static mut CONTEXT_ID: ContextId = ContextId::new(0.);
+
 /// A resource ID type for interop in WASM environment.
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
@@ -118,8 +121,25 @@ pub type RenderPassId = Id<{ ResourceType::RENDER_PASS }>;
 
 impl ContextId {
     /// Creates a new context ID.
-    pub const fn new(id: f64) -> Self {
+    const fn new(id: f64) -> Self {
         Self(id)
+    }
+
+    /// Gets the context ID.
+    pub fn get() -> Self {
+        let id = unsafe { CONTEXT_ID };
+        #[cfg(feature = "wasm-bindgen")]
+        {
+            super::mugl::set_context_memory(id.0, wasm_bindgen::memory());
+        }
+        id
+    }
+
+    /// Sets the context ID.
+    pub fn set(id: u32) {
+        unsafe {
+            CONTEXT_ID = ContextId::new(id as f64);
+        }
     }
 }
 

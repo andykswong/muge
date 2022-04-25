@@ -17,9 +17,9 @@ features = ["std", "serde", "backend-wgpu", "backend-webgl"]
 
 [features]
 default = []
+std = ["wasm-bindgen?/std"]
 backend-wgpu = ["raw-window-handle", "std", "wgpu"]
 backend-webgl = []
-std = []
 
 [dependencies]
 async-trait = "0.1"
@@ -29,13 +29,13 @@ serde = { version = "1.0", optional = true, default-features = false, features =
 serde_repr = "0.1"
 raw-window-handle = {  version = "0.4", optional = true, features = ["alloc"] }
 wgpu = { version = "0.12", optional = true }
+wasm-bindgen = { version = "0.2", optional = true, default-features = false }
 
 [dev-dependencies]
 munum = { path = "../munum", version = "0.1" }
 bytemuck = { version = "1.9", features = [ "derive" ] }
 env_logger = "0.9"
 image = { version = "0.24", default-features = false, features = ["png"] }
-lazy_static = "1.4"
 log = "0.4"
 wee_alloc = { version = "0.4" }
 winit = "0.26"
