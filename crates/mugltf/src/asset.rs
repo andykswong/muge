@@ -1,8 +1,11 @@
+//! glTF JSON / GLB asset parser and loader.
+
 use crate::{
     model::Gltf, Error, GltfResourceLoader, LoadGltfResourceError, LoadGltfResourceErrorKind,
     ParseGltfError, ParseGltfErrorKind,
 };
 use alloc::{borrow::Cow, boxed::Box, vec::Vec};
+use core::{mem, str};
 use mugl::Extent2D;
 
 /// glTF in ASCII
@@ -46,6 +49,18 @@ impl<'a, ImageData> Default for GltfAsset<'a, ImageData> {
 }
 
 impl<'a, ImageData> GltfAsset<'a, ImageData> {
+    /// Converts to owned data.
+    /// Clones the binary data if it is not already owned.
+    #[inline]
+    pub fn into_owned(self) -> GltfAsset<'static, ImageData> {
+        GltfAsset {
+            gltf: self.gltf,
+            bin: Cow::Owned(self.bin.into_owned()),
+            buffers: self.buffers,
+            images: self.images,
+        }
+    }
+
     /// Parses a binary glTF.
     #[cfg(feature = "serde")]
     pub fn parse_glb(data: &'a [u8]) -> Result<Self, ParseGltfError> {
@@ -116,30 +131,72 @@ impl<'a, ImageData> GltfAsset<'a, ImageData> {
         Ok(gltf.into())
     }
 
-    /// Loads all resources of this glTF asset.
-    pub async fn load_resources<L: GltfResourceLoader<ImageData = ImageData>>(
-        &mut self,
+    /// Loads a glTF or GLB asset, optionally with its referenced resources.
+    #[cfg(feature = "serde")]
+    pub async fn load<L: GltfResourceLoader<ImageData = ImageData>>(
         loader: &L,
-    ) -> Result<(), LoadGltfResourceError> {
+        uri: &str,
+        load_resources: bool,
+    ) -> Result<GltfAsset<'a, ImageData>, LoadGltfResourceError> {
+        let content = loader
+            .get_gltf(uri)
+            .await
+            .map_err(|err| LoadGltfResourceError::new(LoadGltfResourceErrorKind::LoadError, err))?;
+
+        let asset = if content.len() < GLB_HEADER_LENGTH || GLB_HEADER_MAGIC != &content[0..4] {
+            // Definitely not GLB, parse content as glTF JSON
+            let gltf_str = str::from_utf8(content.as_slice()).map_err(|err| {
+                LoadGltfResourceError::new(LoadGltfResourceErrorKind::ParseGltfError, err)
+            })?;
+            GltfAsset::parse_gltf(gltf_str).map_err(|err| {
+                LoadGltfResourceError::new(LoadGltfResourceErrorKind::ParseGltfError, err)
+            })?
+        } else {
+            // Header magic matched, can only be GLB
+            GltfAsset::parse_glb(content.as_slice()).map_err(|err| {
+                LoadGltfResourceError::new(LoadGltfResourceErrorKind::ParseGltfError, err)
+            })?
+        };
+
+        Ok(if load_resources {
+            asset.load_resources(loader).await?
+        } else {
+            asset.into_owned()
+        })
+    }
+
+    /// Loads all resources of this glTF asset.
+    /// The bin chunk, if exists, will be consumed and left empty.
+    pub async fn load_resources<L: GltfResourceLoader<ImageData = ImageData>>(
+        mut self,
+        loader: &L,
+    ) -> Result<GltfAsset<'static, ImageData>, LoadGltfResourceError> {
         let mut buffers = Vec::with_capacity(self.gltf.buffers.len());
         let mut images = Vec::with_capacity(self.gltf.images.len());
 
-        for buffer in &self.gltf.buffers {
+        for (buffer_id, buffer) in self.gltf.buffers.iter().enumerate() {
             if !buffer.uri.is_empty() {
                 let data = loader.get_buffer(&buffer.uri).await.map_err(|err| {
-                    LoadGltfResourceError::new(LoadGltfResourceErrorKind::LoadError, err)
+                    LoadGltfResourceError::new(
+                        LoadGltfResourceErrorKind::LoadBufferError(buffer_id),
+                        err,
+                    )
                 })?;
                 buffers.push(data);
             } else {
-                // Undefined uri; Refernce to bin chunk
-                buffers.push(self.bin.clone().into_owned())
+                // Undefined uri refers to bin chunk
+                // We consume the chunk as owned, as there can only be 1 buffer referencing it
+                buffers.push(mem::take(&mut self.bin).into_owned());
             }
         }
 
         for (image_id, image) in self.gltf.images.iter().enumerate() {
             if !image.uri.is_empty() {
                 let data = loader.get_image(&image.uri).await.map_err(|err| {
-                    LoadGltfResourceError::new(LoadGltfResourceErrorKind::LoadError, err)
+                    LoadGltfResourceError::new(
+                        LoadGltfResourceErrorKind::LoadImageError(image_id),
+                        err,
+                    )
                 })?;
                 images.push(data);
             } else {
@@ -162,19 +219,23 @@ impl<'a, ImageData> GltfAsset<'a, ImageData> {
                         .decode_image(data_slice, &image.mime_type)
                         .await
                         .map_err(|err| {
-                            LoadGltfResourceError::new(LoadGltfResourceErrorKind::LoadError, err)
+                            LoadGltfResourceError::new(
+                                LoadGltfResourceErrorKind::LoadImageError(image_id),
+                                err,
+                            )
                         })?;
                     images.push(image_data);
                 } else {
-                    return Err(LoadGltfResourceErrorKind::InvalidImage(image_id).into());
+                    return Err(LoadGltfResourceErrorKind::LoadImageError(image_id).into());
                 }
             }
         }
 
-        self.buffers = buffers;
-        self.images = images;
+        let mut owned = self.into_owned();
+        owned.buffers = buffers;
+        owned.images = images;
 
-        Ok(())
+        Ok(owned)
     }
 }
 

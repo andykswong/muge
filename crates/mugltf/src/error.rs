@@ -1,3 +1,5 @@
+//! Error types.
+
 use super::Id;
 use alloc::boxed::Box;
 use core::fmt;
@@ -94,7 +96,9 @@ impl LoadGltfResourceError {
 impl fmt::Display for LoadGltfResourceError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.kind {
-            LoadGltfResourceErrorKind::InvalidImage(id) => write!(f, "invalid image {}", id),
+            LoadGltfResourceErrorKind::LoadBufferError(id) => write!(f, "failed to load buffer {}", id),
+            LoadGltfResourceErrorKind::LoadImageError(id) => write!(f, "failed to load image {}", id),
+            LoadGltfResourceErrorKind::ParseGltfError => write!(f, "failed to parse glTF or GLB file"),
             _ => write!(f, "failed to load resource"),
         }
     }
@@ -110,8 +114,10 @@ impl std::error::Error for LoadGltfResourceError {
 /// The kind of glTF resource loading error.
 #[derive(Clone, Copy, Debug)]
 pub enum LoadGltfResourceErrorKind {
-    InvalidImage(Id),
+    LoadImageError(Id),
+    LoadBufferError(Id),
     LoadError,
+    ParseGltfError,
 }
 
 impl Default for LoadGltfResourceErrorKind {

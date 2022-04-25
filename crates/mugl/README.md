@@ -39,6 +39,7 @@ Several examples can be found in this repository. Use npm to run the below examp
 ### Hello World
 
 Below is the minimal WASM app to draw the triangle in the basic example using the WebGL backend (See full example code [here](./examples/app/basic.rs)):
+
 ```rust
 use mugl::{prelude::*, webgl::*};
 
@@ -130,7 +131,11 @@ pub extern "C" fn render() {
 
 ```
 
-Below is the JS glue code to initialize the WASM app:
+To run the above WASM module, you need the dependency on `mugl` NPM package and the following JS glue code:
+
+```shell
+npm install --save mugl
+```
 
 ```javascript
 import { set_context_memory } from "mugl/wasm";
@@ -144,6 +149,6 @@ canvas.id = "canvas";
 canvas.width = canvas.height = 512;
 document.body.appendChild(canvas);
 
-// 2. Call render
+// 2. Call render in WASM
 render();
 ```

@@ -22,6 +22,7 @@ Features:
 - `gltf-extras` - enables the `extras` field for all glTF nodes
 - `gltf-extensions` - enables the `extensions` field for all glTF nodes
 - `file-loader` - enables `GltfResourceFileLoader` for loading glTF resources from file system
+- `fetch-loader` - enables `GltfResourceFetchLoader` for loading glTF resources using fetch API for web WASM
 
 ## [Documentation](https://docs.rs/mugltf)
 See Docs.rs: https://docs.rs/mugltf
@@ -29,22 +30,19 @@ See Docs.rs: https://docs.rs/mugltf
 ## Usage
 
 ```rust
-// 1. Start from parsing a gltf / glb file
-let asset = <mugltf::GltfAsset>::parse_gltf(include_str!("./test.gltf"));
-let glb_asset = <mugltf::GltfAsset>::parse_glb(include_str!("./test.glb"));
-
-// You can now read the glTF model and binry chunk (for glb file).
-let gltf_model = glb_asset.gltf;
-let binary_chunk = glb_asset.bin;
-
-// 2. Init a loader to load resources (external/embedded buffers and images) async
+// Init a loader and set the base path (Use mugltf::GltfResourceFetchLoader for WASM web environment)
 let mut loader = mugltf::GltfResourceFileLoader::default();
 loader.set_path("./");
-glb_asset.load_resources(&loader).await?;
 
-// Buffer and image resources are now populated
-let buffers = glb_asset.buffers;
-let images = glb_asset.images;
+// Load a glTF JSON / GLB asset async
+// You can set the last parameter to false to skip loading buffers and images
+let asset = mugltf::GltfAsset.load(&loader, "./test.glb", true).await?;
+
+// You can now read the glTF model and resources.
+let gltf_model = asset.gltf;
+let binary_chunk = asset.bin;
+let buffers = asset.buffers;
+let images = asset.images;
 ```
 
 See [tests](./tests/) for more example usages.

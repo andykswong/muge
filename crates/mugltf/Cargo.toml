@@ -14,7 +14,7 @@ categories = ["graphics", "parsing", "rendering::data-formats", "wasm"]
 keywords = ["3d", "asset", "gltf", "scene", "muge"]
 
 [package.metadata.docs.rs]
-features = ["std", "serde", "file-loader", "gltf-name", "gltf-extras", "gltf-extensions"]
+features = ["std", "serde", "fetch-loader", "file-loader", "gltf-name", "gltf-extras", "gltf-extensions"]
 
 [dependencies]
 mugl = { path = "../mugl", version = "0.1", default-features = false }
@@ -24,15 +24,36 @@ image = { version = "0.24", optional = true, default-features = false, features 
 serde = { version = "1.0", optional = true, default-features = false, features = ["alloc", "derive"] }
 serde_json = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
 serde_repr = { version = "0.1", optional = true }
+wasm-bindgen = { version = "0.2", optional = true, default-features = false }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+js-sys = { version = "0.3", optional = true }
+base64 = { version = "0.13", optional = true }
+
+[dependencies.web-sys]
+version = "0.3"
+optional = true
+features = [
+  'Document',
+  'Element',
+  'Headers',
+  'HtmlImageElement',
+  'Request',
+  'RequestInit',
+  'RequestMode',
+  'Response',
+  'Window',
+]
 
 [dev-dependencies]
 assert-json-diff = "2.0"
 pollster = "0.2"
+wasm-bindgen-test = "0.3"
 
 [features]
 default = ["std", "serde", "gltf-name"]
 std = [
     "serde_json?/std",
+    "wasm-bindgen?/std"
 ]
 serde = [
     "dep:serde",
@@ -41,6 +62,14 @@ serde = [
     "mugl/serde"
 ]
 file-loader = ["std", "data-url", "image"]
+fetch-loader = [
+  "std",
+  "base64",
+  "wasm-bindgen",
+  "js-sys",
+  "web-sys",
+  "wasm-bindgen-futures"
+]
 gltf-name = []
 gltf-extras = []
 gltf-extensions = []
