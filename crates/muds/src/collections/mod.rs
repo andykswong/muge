@@ -8,7 +8,6 @@ pub use genindexmaps::*;
 pub use maps::*;
 
 pub mod allocator;
-pub mod anymap;
 pub mod arena;
 pub mod genindexmap;
 pub mod join;
@@ -17,7 +16,6 @@ pub mod tuple;
 pub mod vecmap;
 
 pub use allocator::GenIndexAllocator;
-pub use anymap::AnyMap;
 pub use arena::GenIndexArena;
 pub use genindexmap::GenIndexMap;
 pub use sparseset::SparseSet;

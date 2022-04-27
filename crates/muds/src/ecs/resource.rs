@@ -1,30 +1,10 @@
 //! Resource locator traits.
 
-use super::{Component, Entity};
-use core::{
-    any::Any,
-    ops::{Deref, DerefMut},
+use super::{
+    registry::{Ref, RefMut},
+    Component, Entity,
 };
-
-/// Resource marker trait.
-pub trait Resource: Any {}
-
-impl<T: Any> Resource for T {}
-
-/// Locator of a resource type.
-pub trait ResourceLocator<'a, R: Resource> {
-    /// Resource reference type.
-    type Ref: Deref<Target = R> + 'a;
-
-    /// Mutable resource reference type.
-    type RefMut: DerefMut<Target = R> + 'a;
-
-    /// Gets resource of type `R`.
-    fn get(&'a self) -> Self::Ref;
-
-    /// Gets resource of type `R` mutably.
-    fn get_mut(&'a self) -> Self::RefMut;
-}
+use core::any::Any;
 
 /// Registry of resources.
 pub trait Resources {
@@ -36,7 +16,7 @@ pub trait Resources {
     /// let mut registry = Registry::default();
     /// registry.register_resource(1u32);
     /// ```
-    fn register_resource<R: Resource>(&mut self, value: R);
+    fn register_resource<R: Any>(&mut self, value: R);
 
     /// Returns if a resource type is registered.
     ///
@@ -47,7 +27,7 @@ pub trait Resources {
     /// registry.register_resource(1u32);
     /// assert!(registry.has_resource::<u32>());
     /// ```
-    fn has_resource<R: Resource>(&self) -> bool;
+    fn has_resource<R: Any>(&self) -> bool;
 
     /// Gets a resource.
     ///
@@ -58,13 +38,7 @@ pub trait Resources {
     /// registry.register_resource(1u32);
     /// assert_eq!(*registry.resource::<u32>(), 1u32);
     /// ```
-    #[inline]
-    fn resource<'a, R: Resource>(&'a self) -> <Self as ResourceLocator<'a, R>>::Ref
-    where
-        Self: ResourceLocator<'a, R>,
-    {
-        ResourceLocator::<R>::get(self)
-    }
+    fn resource<'a, R: Any>(&'a self) -> Ref<'a, R>;
 
     /// Gets a resource mutably.
     ///
@@ -76,17 +50,11 @@ pub trait Resources {
     /// *registry.resource_mut::<u32>() = 2u32;
     /// assert_eq!(*registry.resource::<u32>(), 2u32);
     /// ```
-    #[inline]
-    fn resource_mut<'a, R: Resource>(&'a self) -> <Self as ResourceLocator<'a, R>>::RefMut
-    where
-        Self: ResourceLocator<'a, R>,
-    {
-        ResourceLocator::<R>::get_mut(self)
-    }
+    fn resource_mut<'a, R: Any>(&'a self) -> RefMut<'a, R>;
 }
 
 /// Registry of entities.
-pub trait Entities: Resources {
+pub trait Entities {
     /// Registers an entity type.
     ///
     /// # Examples
@@ -98,10 +66,7 @@ pub trait Entities: Resources {
     /// let mut registry = Registry::default();
     /// registry.register_entity::<Pos>();
     /// ```
-    #[inline]
-    fn register_entity<E: Entity>(&mut self) {
-        self.register_resource(E::Storage::default())
-    }
+    fn register_entity<E: Entity + Any>(&mut self);
 
     /// Returns if an entity type is registered.
     ///
@@ -115,10 +80,7 @@ pub trait Entities: Resources {
     /// registry.register_entity::<Pos>();
     /// assert!(registry.has_entity::<Pos>());
     /// ```
-    #[inline]
-    fn has_entity<E: Entity>(&self) -> bool {
-        self.has_resource::<E::Storage>()
-    }
+    fn has_entity<E: Entity + Any>(&self) -> bool;
 
     /// Gets an entity storage.
     ///
@@ -133,13 +95,7 @@ pub trait Entities: Resources {
     /// let e = registry.entities::<Pos>();
     /// assert_eq!(e.len(), 0);
     /// ```
-    #[inline]
-    fn entities<'a, E: Entity>(&'a self) -> <Self as ResourceLocator<'a, E::Storage>>::Ref
-    where
-        Self: ResourceLocator<'a, E::Storage>,
-    {
-        ResourceLocator::<E::Storage>::get(self)
-    }
+    fn entities<'a, E: Entity + Any>(&'a self) -> Ref<'a, E::Storage>;
 
     /// Gets an entity storage mutably.
     ///
@@ -155,19 +111,11 @@ pub trait Entities: Resources {
     /// e.insert(Pos(1, 2));
     /// assert_eq!(e.len(), 1);
     /// ```
-    #[inline]
-    fn entities_mut<'a, E: Entity>(&'a self) -> <Self as ResourceLocator<'a, E::Storage>>::RefMut
-    where
-        Self: ResourceLocator<'a, E::Storage>,
-    {
-        ResourceLocator::<E::Storage>::get_mut(self)
-    }
+    fn entities_mut<'a, E: Entity + Any>(&'a self) -> RefMut<'a, E::Storage>;
 }
 
-impl<T: Resources> Entities for T {}
-
 /// Registry for components.
-pub trait Components: Resources {
+pub trait Components {
     /// Registers an optional component type for an entity type.
     ///
     /// # Examples
@@ -182,10 +130,7 @@ pub trait Components: Resources {
     /// registry.register_entity::<E>();
     /// registry.register_component::<E, Pos>();
     /// ```
-    #[inline]
-    fn register_component<E: Entity, C: Component<E>>(&mut self) {
-        self.register_resource(C::Storage::default())
-    }
+    fn register_component<E: Entity + Any, C: Component<E> + Any>(&mut self);
 
     /// Returns if a component type is registered.
     ///
@@ -202,10 +147,7 @@ pub trait Components: Resources {
     /// registry.register_component::<E, Pos>();
     /// assert!(registry.has_component::<E, Pos>());
     /// ```
-    #[inline]
-    fn has_component<E: Entity, C: Component<E>>(&self) -> bool {
-        self.has_resource::<C::Storage>()
-    }
+    fn has_component<E: Entity + Any, C: Component<E> + Any>(&self) -> bool;
 
     /// Gets a component storage.
     ///
@@ -224,15 +166,7 @@ pub trait Components: Resources {
     /// let c = registry.components::<E, Pos>();
     /// assert_eq!(c.len(), 0);
     /// ```
-    #[inline]
-    fn components<'a, E: Entity, C: Component<E>>(
-        &'a self,
-    ) -> <Self as ResourceLocator<'a, C::Storage>>::Ref
-    where
-        Self: ResourceLocator<'a, C::Storage>,
-    {
-        ResourceLocator::<C::Storage>::get(self)
-    }
+    fn components<'a, E: Entity + Any, C: Component<E> + Any>(&'a self) -> Ref<'a, C::Storage>;
 
     /// Gets a component storage mutably.
     ///
@@ -254,15 +188,5 @@ pub trait Components: Resources {
     /// c.insert(e.insert(E), Pos(1, 2));
     /// assert_eq!(c.len(), 1);
     /// ```
-    #[inline]
-    fn components_mut<'a, E: Entity, C: Component<E>>(
-        &'a self,
-    ) -> <Self as ResourceLocator<'a, C::Storage>>::RefMut
-    where
-        Self: ResourceLocator<'a, C::Storage>,
-    {
-        ResourceLocator::<C::Storage>::get_mut(self)
-    }
+    fn components_mut<'a, E: Entity + Any, C: Component<E> + Any>(&'a self) -> RefMut<'a, C::Storage>;
 }
-
-impl<T: Resources> Components for T {}

@@ -1,7 +1,11 @@
 //! Archetype helpers.
 
-use super::{resource::ResourceLocator, Component, Components, Entities, Entity, Resources};
+use super::{
+    registry::{Ref, RefMut},
+    Component, Components, Entities, Entity,
+};
 use crate::collections::Cons;
+use core::any::Any;
 
 /// Registry for archetypes.
 ///
@@ -49,7 +53,7 @@ pub trait Archetypes: Entities + Components + Sized {
     /// registry.register_archetype::<E, Cons!(Pos, Vel)>();
     /// ```
     #[inline]
-    fn register_archetype<E: Entity, C: Cons>(&mut self)
+    fn register_archetype<E: Entity + Any, C: Cons>(&mut self)
     where
         (E, C): RegisterArchetype<Self>,
     {
@@ -86,7 +90,7 @@ pub trait Archetypes: Entities + Components + Sized {
     }
 }
 
-impl<T: Resources> Archetypes for T {}
+impl<T: Entities + Components> Archetypes for T {}
 
 /// Trait for registering an archetype.
 pub trait RegisterArchetype<R: Entities + Components> {
@@ -94,15 +98,15 @@ pub trait RegisterArchetype<R: Entities + Components> {
     fn register(registry: &mut R);
 }
 
-impl<R: Entities + Components, E: Entity> RegisterArchetype<R> for (E, ()) {
+impl<R: Entities + Components, E: Entity + Any> RegisterArchetype<R> for (E, ()) {
     #[inline(always)]
     fn register(registry: &mut R) {
         registry.register_entity::<E>();
     }
 }
 
-impl<R: Entities + Components, E: Entity, C: Component<E>, Tail: Cons> RegisterArchetype<R>
-    for (E, (C, Tail))
+impl<R: Entities + Components, E: Entity + Any, C: Component<E> + Any, Tail: Cons>
+    RegisterArchetype<R> for (E, (C, Tail))
 where
     (E, Tail): RegisterArchetype<R>,
 {
@@ -122,13 +126,12 @@ pub trait ArchetypeStorage<'a, R: Entities + Components> {
     fn storage(registry: &'a R) -> Self::Storage;
 }
 
-impl<'a, R: Entities + Components, E: Entity, C: Cons> ArchetypeStorage<'a, R> for (&'a E, C)
+impl<'a, R: Entities + Components, E: Entity + Any, C: Cons> ArchetypeStorage<'a, R> for (&'a E, C)
 where
-    R: ResourceLocator<'a, E::Storage>,
     (E, C): ComponentsStorage<'a, R>,
 {
     type Storage = (
-        <R as ResourceLocator<'a, E::Storage>>::Ref,
+        Ref<'a, E::Storage>,
         <(E, C) as ComponentsStorage<'a, R>>::Storage,
     );
 
@@ -138,13 +141,13 @@ where
     }
 }
 
-impl<'a, R: Entities + Components, E: Entity, C: Cons> ArchetypeStorage<'a, R> for (&'a mut E, C)
+impl<'a, R: Entities + Components, E: Entity + Any, C: Cons> ArchetypeStorage<'a, R>
+    for (&'a mut E, C)
 where
-    R: ResourceLocator<'a, E::Storage>,
     (E, C): ComponentsStorage<'a, R>,
 {
     type Storage = (
-        <R as ResourceLocator<'a, E::Storage>>::RefMut,
+        RefMut<'a, E::Storage>,
         <(E, C) as ComponentsStorage<'a, R>>::Storage,
     );
 
@@ -163,7 +166,7 @@ pub trait ComponentsStorage<'a, R: Components> {
     fn components(registry: &'a R) -> Self::Storage;
 }
 
-impl<'a, R: Components, E: Entity> ComponentsStorage<'a, R> for (E, ()) {
+impl<'a, R: Components, E: Entity + Any> ComponentsStorage<'a, R> for (E, ()) {
     type Storage = ();
 
     #[inline(always)]
@@ -172,14 +175,13 @@ impl<'a, R: Components, E: Entity> ComponentsStorage<'a, R> for (E, ()) {
     }
 }
 
-impl<'a, R: Components, E: Entity, C: Component<E>, Tail: Cons> ComponentsStorage<'a, R>
+impl<'a, R: Components, E: Entity + Any, C: Component<E> + Any, Tail: Cons> ComponentsStorage<'a, R>
     for (E, (&'a C, Tail))
 where
-    R: ResourceLocator<'a, C::Storage>,
     (E, Tail): ComponentsStorage<'a, R>,
 {
     type Storage = (
-        <R as ResourceLocator<'a, C::Storage>>::Ref,
+        Ref<'a, C::Storage>,
         <(E, Tail) as ComponentsStorage<'a, R>>::Storage,
     );
 
@@ -192,14 +194,13 @@ where
     }
 }
 
-impl<'a, R: Components, E: Entity, C: Component<E>, Tail: Cons> ComponentsStorage<'a, R>
+impl<'a, R: Components, E: Entity + Any, C: Component<E> + Any, Tail: Cons> ComponentsStorage<'a, R>
     for (E, (&'a mut C, Tail))
 where
-    R: ResourceLocator<'a, C::Storage>,
     (E, Tail): ComponentsStorage<'a, R>,
 {
     type Storage = (
-        <R as ResourceLocator<'a, C::Storage>>::RefMut,
+        RefMut<'a, C::Storage>,
         <(E, Tail) as ComponentsStorage<'a, R>>::Storage,
     );
 
