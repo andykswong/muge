@@ -16,7 +16,7 @@ static mut CONTEXT_ID: ContextId = ContextId::new(0.);
 
 /// A resource ID type for interop in WASM environment.
 #[repr(transparent)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Id<const T: usize>(pub f64);
 
 impl<const T: usize> Id<T> {
@@ -145,7 +145,7 @@ impl ContextId {
 
 #[allow(dead_code)]
 #[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FutureStatus {
     Pending = 0,
     Done = 1,
@@ -220,7 +220,7 @@ impl<'a> From<&BindGroupLayoutEntry<'a>> for JsBindGroupLayoutEntry {
 }
 
 #[repr(u32)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BindingTypeId {
     Buffer = 0,
     Sampler = 1,

@@ -16,13 +16,13 @@ cfg_if::cfg_if! {
 
 /// A 2D origin.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash)]
 #[repr(C)]
 pub struct Origin2D(pub u32, pub u32);
 
 /// A 3D origin.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash)]
 #[repr(C)]
 pub struct Origin3D(pub u32, pub u32, pub u32);
 
@@ -34,7 +34,7 @@ impl From<Origin2D> for Origin3D {
 
 /// A 2D extent.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 #[repr(C)]
 pub struct Extent2D(pub u32, pub u32);
 
@@ -47,7 +47,7 @@ impl Default for Extent2D {
 
 /// A 3D extent.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 #[repr(C)]
 pub struct Extent3D(pub u32, pub u32, pub u32);
 
@@ -66,7 +66,7 @@ impl From<Extent2D> for Extent3D {
 
 /// A RGBA color.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 #[repr(C)]
 pub struct Color<F = f64>(pub F, pub F, pub F, pub F);
 
@@ -188,7 +188,7 @@ impl Default for ShaderStage {
 /// Texture dimension.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gputextureviewdimension>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum TextureDimension {
     D2 = gl_const::TEXTURE_2D,
@@ -207,7 +207,7 @@ impl Default for TextureDimension {
 /// Texture format.
 /// See: <https://www.w3.org/TR/webgpu/#texture-formats>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum TextureFormat {
     // 8-bit formats
@@ -333,7 +333,7 @@ impl TextureFormat {
 /// Texture address mode.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuaddressmode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum AddressMode {
     ClampToEdge = gl_const::CLAMP_TO_EDGE,
@@ -351,7 +351,7 @@ impl Default for AddressMode {
 /// Texture filter mode.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpufiltermode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum FilterMode {
     Nearest = gl_const::NEAREST,
@@ -368,7 +368,7 @@ impl Default for FilterMode {
 /// Compare function.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpucomparefunction>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum CompareFunction {
     Never = gl_const::NEVER,
@@ -391,7 +391,7 @@ impl Default for CompareFunction {
 /// Primitive topology.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuprimitivetopology>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum PrimitiveTopology {
     Points = gl_const::POINTS,
@@ -411,7 +411,7 @@ impl Default for PrimitiveTopology {
 /// Vertex index format.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuindexformat>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum IndexFormat {
     UI16 = gl_const::UNSIGNED_SHORT,
@@ -428,7 +428,7 @@ impl Default for IndexFormat {
 /// Identify which side is the front face by setting a winding orientation.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpufrontface>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum FrontFace {
     CCW = gl_const::CCW,
@@ -445,7 +445,7 @@ impl Default for FrontFace {
 /// Specify the face to cull.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpucullmode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum CullMode {
     None = gl_const::NONE,
@@ -463,7 +463,7 @@ impl Default for CullMode {
 /// Stencil-buffer operation.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpustenciloperation>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum StencilOperation {
     Keep = gl_const::KEEP,
@@ -486,7 +486,7 @@ impl Default for StencilOperation {
 /// Specify the alpha-blending factor.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpublendfactor>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum BlendFactor {
     Zero = gl_const::ZERO,
@@ -507,7 +507,7 @@ pub enum BlendFactor {
 /// Specify the blend operation.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpublendoperation>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum BlendOperation {
     Add = gl_const::FUNC_ADD,
@@ -527,7 +527,7 @@ impl Default for BlendOperation {
 /// Vertex step mode.
 /// See: <https://www.w3.org/TR/webgpu/#enumdef-gpuvertexstepmode>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum VertexStepMode {
     Vertex = 0,
@@ -549,7 +549,7 @@ impl Default for VertexStepMode {
 /// - bits 8-11 encodes the data type (1 = int, 2 = float)
 /// - bits 12-15 encodes the signedness and normalization for int (0 = unsigned, 1 = signed, 2 = unsigned normalized, 3 = signed normalized)
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum VertexFormat {
     UI8x2 = 0x01_1_2,
@@ -587,11 +587,11 @@ impl Default for VertexFormat {
 
 /// Hint indicating what class of device should be selected.
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum PowerPreference {
-    LowPower,
-    HighPerformance,
+    LowPower = 0,
+    HighPerformance = 1,
 }
 
 impl Default for PowerPreference {
@@ -603,7 +603,7 @@ impl Default for PowerPreference {
 
 /// The required type for a sampler binding
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum SamplerBindingType {
     Filtering = 0,
@@ -620,7 +620,7 @@ impl Default for SamplerBindingType {
 
 /// The type of a sample for a texture binding
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum TextureSampleType {
     Float = 0,
@@ -639,7 +639,7 @@ impl Default for TextureSampleType {
 /// Hint for mipmap generation.
 /// See: <https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/hint>
 #[cfg_attr(feature = "serde", derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr))]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum MipmapHint {
     Fast = gl_const::FASTEST,
