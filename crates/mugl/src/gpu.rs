@@ -156,6 +156,9 @@ pub trait GPUDevice<G: GPU> {
         size: Extent3D,
     );
 
+    /// Returns if the surface is using SRGB.
+    fn is_srgb_surface(&self) -> bool;
+
     /// Returns if the device is lost.
     fn is_lost(&self) -> bool;
 

@@ -126,6 +126,10 @@ impl GPUDevice<EmptyGPU> for EmptyGPUDevice {
     ) {
     }
 
+    fn is_srgb_surface(&self) -> bool {
+        false
+    }
+
     fn is_lost(&self) -> bool {
         false
     }

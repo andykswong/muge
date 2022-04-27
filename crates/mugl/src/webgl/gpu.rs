@@ -388,18 +388,26 @@ impl GPUDevice<WebGL> for WebGLDevice {
         }
     }
 
+    #[inline]
+    fn is_srgb_surface(&self) -> bool {
+        false // WebGL does not have SRGB backbuffer
+    }
+
     fn is_lost(&self) -> bool {
         unsafe { mugl::is_device_lost(self.id) }
     }
 
+    #[inline]
     fn flush(&self) {
         // noop
     }
 
+    #[inline]
     fn present(&self) {
         // noop
     }
 
+    #[inline]
     fn resize_surface(&self, _size: Extent2D) {
         // noop
     }

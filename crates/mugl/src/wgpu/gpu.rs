@@ -23,6 +23,8 @@ use crate::descriptor::{
 use crate::gpu::{GPUDevice, GPURefTypes, GPURenderPassEncoder, GPU};
 use crate::primitive::{BufferSize, Color, Extent2D, Extent3D, TextureUsage};
 
+const DEFAULT_SURFACE_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Bgra8UnormSrgb;
+
 /// WebGPU interface.
 #[derive(Debug)]
 pub struct WGPU;
@@ -101,7 +103,9 @@ impl WGPU {
 
         let surface_config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format: surface.get_preferred_format(&adapter)?,
+            format: surface
+                .get_preferred_format(&adapter)
+                .unwrap_or(DEFAULT_SURFACE_FORMAT),
             width: surface_descriptor.size.0,
             height: surface_descriptor.size.1,
             present_mode: wgpu::PresentMode::Fifo,
@@ -154,6 +158,14 @@ impl<'a> GPURefTypes<'a, WGPU> for WGPU {
 }
 
 impl WGPUDevice {
+    /// Gets the surface format being used.
+    #[inline]
+    fn get_surface_format(&self) -> wgpu::TextureFormat {
+        self.surface
+            .get_preferred_format(&self.adapter)
+            .unwrap_or(DEFAULT_SURFACE_FORMAT)
+    }
+
     /// Submits a command buffer.
     fn submit(&self, buffer: wgpu::CommandBuffer) {
         if let Ok(mut commands) = self.commands.write() {
@@ -333,10 +345,7 @@ impl GPUDevice<WGPU> for WGPUDevice {
                         targets: &(match descriptor.targets {
                             ColorTargetStates::Default { blend, write_mask } => {
                                 vec![wgpu::ColorTargetState {
-                                    format: self
-                                        .surface
-                                        .get_preferred_format(&self.adapter)
-                                        .unwrap(),
+                                    format: self.get_surface_format(),
                                     blend: blend.map(Into::into),
                                     write_mask: write_mask.into(),
                                 }]
@@ -610,8 +619,15 @@ impl GPUDevice<WGPU> for WGPUDevice {
         });
     }
 
+    #[inline]
+    fn is_srgb_surface(&self) -> bool {
+        self.get_surface_format().describe().srgb
+    }
+
+    #[inline]
     fn is_lost(&self) -> bool {
         // TODO
+        #[cfg(debug_assertions)]
         std::dbg!("is_lost is currently unsupported by WGPU backend");
         false
     }
