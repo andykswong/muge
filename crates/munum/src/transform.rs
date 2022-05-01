@@ -250,7 +250,8 @@ pub fn ortho<T: Copy + NumAssign>(
     result
 }
 
-/// Creates the 4x4 perspective projection using glTF's formula. Use infinite projection if zfar = Infinity.
+/// Creates the 4x4 perspective projection using glTF's formula.
+/// Uses infinite projection if zfar = Infinity.
 /// See: <https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#projection-matrices>
 ///
 /// # Examples
@@ -268,14 +269,50 @@ pub fn ortho<T: Copy + NumAssign>(
 /// );
 /// ```
 #[cfg(any(feature = "std", feature = "libm"))]
+#[inline]
 pub fn perspective<T: Copy + Float + NumAssign>(aspect: T, yfov: T, znear: T, zfar: T) -> Mat4<T> {
+    let two = T::one() + T::one();
+    let top = znear * (yfov / two).tan();
+    let right = aspect * top;
+    perspective_viewport(-right, right, -top, top, znear, zfar)
+}
+
+/// Creates the 4x4 perspective projection from viewport and range.
+/// Uses infinite projection if zfar = Infinity.
+///
+/// # Examples
+/// ```
+/// # use core::f32::INFINITY;
+/// # use munum::{transform, assert_float_eq};
+/// assert_float_eq!(
+///     transform::perspective_viewport(-1.0, 3.0, -0.5, 1.5, 1., INFINITY).as_ref(),
+///     &[0.5, 0., 0., 0., 0., 1., 0., 0., 0.5, 0.5, -1., -1., 0., 0., -2., 0.]
+/// );
+/// assert_float_eq!(
+///     transform::perspective_viewport(-1.0, 3.0, -0.5, 1.5, 1., 9.).as_ref(),
+///     &[0.5, 0., 0., 0., 0., 1., 0., 0., 0.5, 0.5, -1.25, -1., 0., 0., -2.25, 0.]
+/// );
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+pub fn perspective_viewport<T: Copy + Float + NumAssign>(
+    left: T,
+    right: T,
+    bottom: T,
+    top: T,
+    znear: T,
+    zfar: T,
+) -> Mat4<T> {
     let one = T::one();
     let two = one + one;
-    let f = one / (yfov / two).tan();
+
+    let x = one / (right - left);
+    let y = one / (top - bottom);
 
     let mut result = Mat4::identity();
-    result[(0, 0)] = f / aspect;
-    result[(1, 1)] = f;
+    result[(0, 0)] = two * znear * x;
+    result[(1, 1)] = two * znear * y;
+    result[(0, 2)] = (right + left) * x;
+    result[(1, 2)] = (top + bottom) * y;
     result[(3, 2)] = -one;
     result[(3, 3)] = T::zero();
 

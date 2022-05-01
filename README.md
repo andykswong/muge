@@ -1,5 +1,5 @@
 <h1 align="center">🕊 ɱυɠҽ · むげ</h1>
-<h2 align="center">Minimal, Modular, Multiplatform Graphics Engine for Rust and WebAssembly</h2>
+<h2 align="center">Minimal, Modular, Multiplatform Graphics Engine<br/>for Rust and WebAssembly</h2>
 <br />
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a> 
