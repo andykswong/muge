@@ -64,7 +64,7 @@ pub extern "C" fn render() {
         -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
     ];
     let vertices: &[u8] = bytemuck::cast_slice(vertices);
-    let buffer = device.create_buffer(BufferDescriptor { usage: BufferUsage::VERTEX, size: 3 });
+    let buffer = device.create_buffer(BufferDescriptor { usage: BufferUsage::VERTEX, size: vertices.len() });
     device.write_buffer(&buffer, 0, vertices);
 
     // 3. Create shaders
